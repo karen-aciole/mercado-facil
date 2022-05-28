@@ -19,4 +19,8 @@ public class LoteDTO {
 	public int getQuantidade() {
 		return quantidade;
 	}
+	
+	public String toString() { 
+		return "ID do produto: " + getIdProduto() + " - Quantidade" + getQuantidade();
+	}
 }

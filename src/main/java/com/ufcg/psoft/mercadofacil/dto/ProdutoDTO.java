@@ -13,7 +13,8 @@ public class ProdutoDTO {
 		this.fabricante = fabricante;
 		this.preco = preco;
 	}
-	
+
+
 	public String getNome() {
 		return nome;
 	}
@@ -24,5 +25,10 @@ public class ProdutoDTO {
 	
 	public double getPreco() {
 		return preco;
+	}
+	
+	public String toString() {
+		return "Produto: " + getNome() + " - Fabricante: " + getFabricante() 
+		+ " - Preco" + getPreco();
 	}
 }

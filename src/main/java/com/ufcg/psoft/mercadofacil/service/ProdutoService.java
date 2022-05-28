@@ -68,4 +68,15 @@ public class ProdutoService {
 		
 		return(prod);
 	}
+	
+	
+	public void editProduto(ProdutoDTO prodDTO, Produto produto) throws ProductNotFoundException { 
+		produto.setFabricante(prodDTO.getFabricante());
+		produto.setNome(prodDTO.getNome());
+		produto.setPreco(prodDTO.getPreco());
+	}
+	
+	public void deletProduto(String id) throws ProductNotFoundException { 
+		this.prodRep.delProd(id);
+	}
 }

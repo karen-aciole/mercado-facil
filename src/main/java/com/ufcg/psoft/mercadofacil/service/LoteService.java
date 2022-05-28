@@ -1,5 +1,8 @@
 package com.ufcg.psoft.mercadofacil.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,10 @@ public class LoteService {
 	private ProdutoRepository produtoRep;
 	
 	private Gson gson = new Gson();
+	
+	public List<Lote> listarLotes() {
+		return new ArrayList<Lote>(loteRep.getAll());
+	}
 	
 	public String addLote(String jsonData) throws ProductNotFoundException {
 		LoteDTO loteDTO = gson.fromJson(jsonData, LoteDTO.class);

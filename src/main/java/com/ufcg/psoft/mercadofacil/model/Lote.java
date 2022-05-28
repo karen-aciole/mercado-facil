@@ -32,13 +32,25 @@ public class Lote {
 	public int getQuantidade() {
 		return quantidade;
 	}
+	
+	public void setQuantidade(int quantidade) {
+		this.quantidade = quantidade;
+	}
 
 	public Date getDataFabricacao() {
 		return dataFabricacao;
 	}
+	
+	public void setDataFabricacao(Date dataFabricacao) {
+		this.dataFabricacao = dataFabricacao;
+	}
 
 	public Date getDataValidade() {
 		return dataValidade;
+	}
+	
+	public void setDataValidade(Date dataValidade) {
+		this.dataValidade = dataValidade;
 	}
 
 	public String toString() {

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
+import com.ufcg.psoft.mercadofacil.dto.ProdutoDTO;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Lote;
 import com.ufcg.psoft.mercadofacil.model.Produto;
@@ -30,13 +31,18 @@ public class LoteService {
 	}
 	
 	public String addLote(String jsonData) throws ProductNotFoundException {
+		
 		LoteDTO loteDTO = gson.fromJson(jsonData, LoteDTO.class);
 		Produto prod = this.produtoRep.getProd(loteDTO.getIdProduto());
 		
 		if(prod == null) throw new ProductNotFoundException("Produto: " + loteDTO.getIdProduto() + " não encontrado");
 		Lote lote = new Lote(prod, loteDTO.getQuantidade());
 		this.loteRep.addLote(lote);
-
+		
 		return lote.getId();
+	}
+	
+	public void deletLote(String id) throws ProductNotFoundException { 
+		this.loteRep.delLot(id);
 	}
 }

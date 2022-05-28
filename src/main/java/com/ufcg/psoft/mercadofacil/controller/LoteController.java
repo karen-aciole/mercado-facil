@@ -14,6 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
+import com.ufcg.psoft.mercadofacil.dto.ProdutoDTO;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Lote;
 import com.ufcg.psoft.mercadofacil.model.Produto;
@@ -33,19 +34,39 @@ public class LoteController {
 	
 	//CriaLote
 	@RequestMapping(value = "/lote/", method = RequestMethod.POST)
-	public ResponseEntity<?> criarLote(@PathVariable("id") String id, @RequestBody int quantidade, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> criarLote(@RequestBody String id, int quantidade, UriComponentsBuilder ucBuilder) {
 		Gson gson = new Gson();
-		Produto produto;
-		Lote lote;
+		LoteDTO loteDTO; 
+		
 		try {
-			produto = produtoService.getProdutoById(id);
-			lote = new Lote(produto, quantidade);
-			String loteJson = gson.toJson(lote);
-			loteService.addLote(loteJson);
+			loteDTO = new LoteDTO(id, quantidade); 
+			String lote = gson.toJson(loteDTO);
+			
+			loteService.addLote(lote);
 
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<String>("Lote cadastrado", HttpStatus.OK);
+	}
+	
+	//Lista lotes
+	@RequestMapping(value = "/lotes", method = RequestMethod.GET)
+	public ResponseEntity<?> listarLotes() { 
+		List<Lote> lotes = loteService.listarLotes();
+		
+		return new ResponseEntity<List<Lote>>(lotes, HttpStatus.OK);
+	}
+	
+	//Deleta lote
+	@RequestMapping(value = "/lote/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<?> deletarLote(@PathVariable("id") String id) {
+		
+		try { 
+			this.loteService.deletLote(id);
+		} catch (ProductNotFoundException e) {
+			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<String>("Produto deletado", HttpStatus.OK);
 	}
 }

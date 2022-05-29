@@ -74,6 +74,7 @@ public class ProdutoService {
 		produto.setFabricante(prodDTO.getFabricante());
 		produto.setNome(prodDTO.getNome());
 		produto.setPreco(prodDTO.getPreco());
+		this.prodRep.editProd(produto.getId(), produto);
 	}
 	
 	public void deletProduto(String id) throws ProductNotFoundException { 

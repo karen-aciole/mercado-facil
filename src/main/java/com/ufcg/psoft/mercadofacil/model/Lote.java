@@ -14,11 +14,20 @@ public class Lote {
 	
 	private Date dataValidade; 
 	
+	
 	public Lote(Produto produto, int quantidade) {
 		
 		this.id = UUID.randomUUID().toString();
 		this.produto = produto;
 		this.quantidade = quantidade;
+	}
+	
+	public void updateDataLote(Produto produto, int quantidade, Date dataFabricacao, Date dataValidade) {
+		this.produto = produto;
+		this.quantidade = quantidade;
+		this.dataFabricacao = dataFabricacao;
+		this.dataValidade = dataValidade;
+
 	}
 	
 	public String getId() {
@@ -52,8 +61,10 @@ public class Lote {
 	public void setDataValidade(Date dataValidade) {
 		this.dataValidade = dataValidade;
 	}
-
+	
+	@Override
 	public String toString() {
-		return "Lote ID: " + getId() + " - Produto: " + getProduto().getNome() + " - " + getQuantidade() + " itens";
+		return "Lote ID: " + getId() + " - Produto: " + getProduto().getNome() + " - " + getQuantidade() + " itens" +
+				"- Data de Fabricacao" + getDataFabricacao() + "- Data de validade" + getDataValidade();
 	}
 }

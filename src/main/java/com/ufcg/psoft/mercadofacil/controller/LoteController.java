@@ -1,4 +1,5 @@
 package com.ufcg.psoft.mercadofacil.controller;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
 import com.ufcg.psoft.mercadofacil.dto.ProdutoDTO;
+import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Lote;
 import com.ufcg.psoft.mercadofacil.model.Produto;
@@ -41,7 +43,7 @@ public class LoteController {
 		String loteID;
 		
 		try {
-			loteDTO = new LoteDTO(id, quantidade); 
+			loteDTO = new LoteDTO(id, quantidade);
 			String lote = gson.toJson(loteDTO);
 			
 			loteID = loteService.addLote(lote);
@@ -55,7 +57,7 @@ public class LoteController {
 	//Lista lotes
 	@RequestMapping(value = "/lotes", method = RequestMethod.GET)
 	public ResponseEntity<?> listarLotes() { 
-		List<Lote> lotes = loteService.listarLotes();
+		List<Lote> lotes = loteService.listaLotes();
 		
 		return new ResponseEntity<List<Lote>>(lotes, HttpStatus.OK);
 	}
@@ -66,11 +68,40 @@ public class LoteController {
 		
 		try { 
 			this.loteService.deletLote(id);
-		} catch (ProductNotFoundException e) {
-			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
+		} catch (LoteNotFoundException e) {
+			return new ResponseEntity<String>("Lote não encontrado", HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<String>("Lote deletado", HttpStatus.OK);
 	}
 	
-
+	//Consultar Lote pelo ID
+	@RequestMapping(value = "/lote/{id}", method = RequestMethod.GET)
+	public ResponseEntity<?> consultarLotePeloID(@PathVariable("id") String id) {
+		
+		Lote lote; 
+		try {
+			lote = loteService.getLoteById(id);
+		} catch (LoteNotFoundException e) {
+			return new ResponseEntity<String>("Lote não encontrado", HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<Lote>(lote, HttpStatus.OK);
+	}
+	
+	
+	//Edita lote
+	@RequestMapping(value = "/lote/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<?> editarLote(@PathVariable("id") String id, @RequestBody LoteDTO updateLote, UriComponentsBuilder ucBuilder){
+	
+		Lote lote; 
+		try { 
+			lote = loteService.getLoteById(id);
+			loteService.editLote(updateLote, lote);
+		} catch (LoteNotFoundException e) {
+			return new ResponseEntity<String>("Lote não encontrado", HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<String>("Lote atualizado.", HttpStatus.OK);
+	}
+	
 }

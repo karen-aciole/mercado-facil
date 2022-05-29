@@ -1,10 +1,17 @@
 package com.ufcg.psoft.mercadofacil.dto;
 
+import java.util.Date;
+
 public class LoteDTO {
 	
 	private String idProduto;
 	
-	private int quantidade; 
+	private int quantidade;
+
+	private String dataFabricacao;
+
+	private String dataValidade; 
+	
 	
 	public LoteDTO(String idProduto, int quantidade) {
 		
@@ -18,6 +25,14 @@ public class LoteDTO {
 
 	public int getQuantidade() {
 		return quantidade;
+	}
+	
+	public String getDataFabricacao() {
+		return dataFabricacao;
+	}
+	
+	public String getDataValidade() {
+		return dataValidade;
 	}
 	
 	public String toString() { 

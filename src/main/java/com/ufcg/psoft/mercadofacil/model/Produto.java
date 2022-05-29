@@ -47,6 +47,6 @@ public class Produto {
 	}
 	
 	public String toString() {
-		return "Produto: " + getNome() + " - Fabricante: " + getFabricante();
+		return "\nProduto: " + getNome() + " - Fabricante: " + getFabricante() + " - Preco: " + getPreco();
 	}
 }

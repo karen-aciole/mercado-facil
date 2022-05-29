@@ -32,7 +32,7 @@ public class ProdutoController {
 	public ResponseEntity<?> criarProduto(@RequestBody ProdutoDTO produtoDTO, UriComponentsBuilder ucBuilder) {
 
 		String prodID = produtoService.addProduto(produtoDTO);
-		return new ResponseEntity<String>("Produto cadastrado com ID:" + prodID, HttpStatus.CREATED);
+		return new ResponseEntity<String>("Produto cadastrado com ID: " + prodID, HttpStatus.CREATED);
 	}
 	
 	//CONSULTA PRODUTO PELO ID 
@@ -69,7 +69,7 @@ public class ProdutoController {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);		
 		}
 			
-		return new ResponseEntity<String>("Produto atualizado.", HttpStatus.OK); 
+		return new ResponseEntity<String>("Produto atualizado." + produto, HttpStatus.OK); 
 	}
 	
 	//DELETA PRODUTO

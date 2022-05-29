@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,7 +37,7 @@ public class ProdutoController {
 	
 	//CONSULTA PRODUTO PELO ID 
 	@RequestMapping(value = "/produto/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> consultarProduto(@PathVariable("id") String id) {
+	public ResponseEntity<?> consultarProdutoPeloID(@PathVariable("id") String id) {
 
 		Produto produto;
 		try {
@@ -56,7 +57,7 @@ public class ProdutoController {
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}
 	
-	//EDITA PRODUTOS
+	//EDITA PRODUTOS -> caso tenha lote, é necessário deletar o lote também. 
 	@RequestMapping (value = "/produto/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> editarProduto(@PathVariable("id") String id, @RequestBody ProdutoDTO updateProduto, UriComponentsBuilder ucBuilder) {
 		
@@ -82,4 +83,19 @@ public class ProdutoController {
 		}
 		return new ResponseEntity<String>("Produto deletado", HttpStatus.OK);
 	}
+	
+	// CONSULTA PRODUTO PELO NOME
+	@RequestMapping (value="/produto/nome", method = RequestMethod.GET)
+	public ResponseEntity<?>consultarProdutoPeloNome(@RequestParam(value = "nome") String nome) {
+		List<Produto> produtos = produtoService.listarProdsByName(nome);
+		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
+	}
+	
+	//CONSULTAR PRODUTOS PELO NOME QUE POSSUEM LOTE
+	@RequestMapping (value="/produto/nome/possuiLote", method = RequestMethod.GET)
+	public ResponseEntity<?>consultarProdutoPeloNomeComLote(@RequestParam(value = "nome") String nome) {
+		List<Produto> produtos = produtoService.listarProdsLoteByName(nome);
+		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
+	}
+
 }

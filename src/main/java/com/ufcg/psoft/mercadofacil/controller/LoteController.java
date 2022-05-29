@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,17 +38,18 @@ public class LoteController {
 	public ResponseEntity<?> criarLote(@RequestBody String id, int quantidade, UriComponentsBuilder ucBuilder) {
 		Gson gson = new Gson();
 		LoteDTO loteDTO; 
+		String loteID;
 		
 		try {
 			loteDTO = new LoteDTO(id, quantidade); 
 			String lote = gson.toJson(loteDTO);
 			
-			loteService.addLote(lote);
+			loteID = loteService.addLote(lote);
 
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<String>("Lote cadastrado", HttpStatus.OK);
+		return new ResponseEntity<String>("Lote cadastrado com ID: " + loteID, HttpStatus.OK);
 	}
 	
 	//Lista lotes
@@ -67,6 +69,8 @@ public class LoteController {
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
 		}
-		return new ResponseEntity<String>("Produto deletado", HttpStatus.OK);
+		return new ResponseEntity<String>("Lote deletado", HttpStatus.OK);
 	}
+	
+
 }

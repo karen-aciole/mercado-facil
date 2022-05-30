@@ -1,5 +1,4 @@
 package com.ufcg.psoft.mercadofacil.model;
-import java.util.Date;
 import java.util.UUID;
 
 public class Lote {

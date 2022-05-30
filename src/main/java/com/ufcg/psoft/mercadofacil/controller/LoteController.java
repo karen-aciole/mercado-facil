@@ -1,5 +1,4 @@
 package com.ufcg.psoft.mercadofacil.controller;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,19 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
-import com.ufcg.psoft.mercadofacil.dto.ProdutoDTO;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Lote;
-import com.ufcg.psoft.mercadofacil.model.Produto;
 import com.ufcg.psoft.mercadofacil.service.LoteService;
-import com.ufcg.psoft.mercadofacil.service.ProdutoService;
 
 @RestController
 @RequestMapping("/api")
@@ -31,9 +26,6 @@ public class LoteController {
 	
 	@Autowired
 	private LoteService loteService;
-	
-	@Autowired
-	private ProdutoService produtoService;
 	
 	//CriaLote
 	@RequestMapping(value = "/lote/", method = RequestMethod.POST)
@@ -101,7 +93,7 @@ public class LoteController {
 			return new ResponseEntity<String>("Lote não encontrado", HttpStatus.NO_CONTENT);
 		}
 		
-		return new ResponseEntity<String>("Lote atualizado.", HttpStatus.OK);
+		return new ResponseEntity<String>("Lote atualizado." + lote, HttpStatus.OK);
 	}
 	
 }

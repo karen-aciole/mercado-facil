@@ -66,9 +66,7 @@ public class LoteService {
 	}
 	
 	public void editLote(LoteDTO loteDTO, Lote lote) throws LoteNotFoundException {
-		//lote.setDataFabricacao(loteDTO.getDataFabricacao());
-		//lote.setDataValidade(loteDTO.getDataValidade());
-		lote.setQuantidade(lote.getQuantidade());
+		lote.setQuantidade(loteDTO.getQuantidade());
 		this.loteRep.editLote(lote.getId(), lote);
 	}
 	

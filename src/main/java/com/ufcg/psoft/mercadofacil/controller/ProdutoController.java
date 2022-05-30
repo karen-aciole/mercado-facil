@@ -57,7 +57,7 @@ public class ProdutoController {
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}
 	
-	//EDITA PRODUTOS -> caso tenha lote, é necessário deletar o lote também. 
+	//EDITA PRODUTOS
 	@RequestMapping (value = "/produto/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<?> editarProduto(@PathVariable("id") String id, @RequestBody ProdutoDTO updateProduto, UriComponentsBuilder ucBuilder) {
 		

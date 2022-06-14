@@ -49,6 +49,7 @@ public class ProdutoService {
 	private List<Produto> getProdsWithLote() {
 		List<Produto> prods = new ArrayList<Produto>();
 		for (Lote lote : this.loteRep.getAll()) {
+			if (checkIfProductExists(lote.getId()) == true)
 			prods.add(lote.getProduto());
 		}
 		return(prods);
@@ -71,13 +72,24 @@ public class ProdutoService {
 	
 	
 	public void editProduto(ProdutoDTO prodDTO, Produto produto) throws ProductNotFoundException { 
-		produto.setFabricante(prodDTO.getFabricante());
-		produto.setNome(prodDTO.getNome());
-		produto.setPreco(prodDTO.getPreco());
+		produto.setFabricante(!prodDTO.getFabricante().isBlank() ? prodDTO.getFabricante() : produto.getFabricante());
+		produto.setNome(!prodDTO.getNome().isBlank() ? prodDTO.getNome() : produto.getNome());
+		produto.setPreco(prodDTO.getPreco() >= 0 ? prodDTO.getPreco() : produto.getPreco());
 		this.prodRep.editProd(produto.getId(), produto);
 	}
 	
 	public void deletProduto(String id) throws ProductNotFoundException { 
 		this.prodRep.delProd(id);
+	}
+	
+	private boolean checkIfProductExists(String idLote) {
+		Lote lote = this.loteRep.getLote(idLote);
+		String produtoID = lote.getProduto().getId();
+		Produto produto = this.prodRep.getProd(produtoID);
+		if (produto == null) {
+			this.loteRep.delLot(idLote);
+			return false;
+		}
+		return true;
 	}
 }

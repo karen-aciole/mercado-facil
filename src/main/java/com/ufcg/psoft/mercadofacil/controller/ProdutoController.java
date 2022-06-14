@@ -85,14 +85,14 @@ public class ProdutoController {
 	}
 	
 	// CONSULTA PRODUTO PELO NOME
-	@RequestMapping (value="/produto/nome", method = RequestMethod.GET)
+	@RequestMapping (value="/produto", method = RequestMethod.GET)
 	public ResponseEntity<?>consultarProdutoPeloNome(@RequestParam(value = "nome") String nome) {
 		List<Produto> produtos = produtoService.listarProdsByName(nome);
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);
 	}
 	
 	//CONSULTAR PRODUTOS PELO NOME QUE POSSUEM LOTE
-	@RequestMapping (value="/produto/nome/possuiLote", method = RequestMethod.GET)
+	@RequestMapping (value="/produto/possuiLote", method = RequestMethod.GET)
 	public ResponseEntity<?>consultarProdutoPeloNomeComLote(@RequestParam(value = "nome") String nome) {
 		List<Produto> produtos = produtoService.listarProdsLoteByName(nome);
 		return new ResponseEntity<List<Produto>>(produtos, HttpStatus.OK);

@@ -18,8 +18,14 @@ public class UsuarioService {
 	@Autowired
 	private UsuarioRepository userRepo; 
 	
-	public List<Usuario> listarUsuarios() {
-		return new ArrayList<Usuario>(userRepo.getAll());
+	// Queremos apenas o CPF e o nome dos usuários
+	public List<String> listUsers() {
+		List<String> users = new ArrayList<String>();
+		for (Usuario usuario : this.userRepo.getAll()) {
+			String userList = "CPF do usuário: " + usuario.getCpf() + " - Nome do usuário: "+ usuario.getNome();
+			users.add(userList); 
+		}
+		return users;
 	}
 	
 	public String createUser(UsuarioDTO userDTO) throws UsuarioAlreadyExists  {

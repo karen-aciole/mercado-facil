@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
@@ -29,16 +28,12 @@ public class LoteController {
 	
 	//CriaLote
 	@RequestMapping(value = "/lote/", method = RequestMethod.POST)
-	public ResponseEntity<?> criarLote(@RequestBody String id, int quantidade, UriComponentsBuilder ucBuilder) {
-		Gson gson = new Gson();
-		LoteDTO loteDTO; 
+	public ResponseEntity<?> criarLote(@RequestBody LoteDTO loteDTO, UriComponentsBuilder ucBuilder) {
+		
 		String loteID;
 		
 		try {
-			loteDTO = new LoteDTO(id, quantidade);
-			String lote = gson.toJson(loteDTO);
-			
-			loteID = loteService.addLote(lote);
+			loteID = loteService.addLote(loteDTO);
 
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
@@ -83,7 +78,7 @@ public class LoteController {
 	
 	//Edita lote
 	@RequestMapping(value = "/lote/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<?> editarLote(@PathVariable("id") String id, @RequestBody LoteDTO updateLote, UriComponentsBuilder ucBuilder){
+	public ResponseEntity<?> editarLote(@PathVariable("id") String id, @RequestBody LoteDTO updateLote, UriComponentsBuilder ucBuilder) {
 	
 		Lote lote; 
 		try { 
@@ -93,7 +88,7 @@ public class LoteController {
 			return new ResponseEntity<String>("Lote não encontrado", HttpStatus.NO_CONTENT);
 		}
 		
-		return new ResponseEntity<String>("Lote atualizado." + lote, HttpStatus.OK);
+		return new ResponseEntity<String>("Lote atualizado.\n" + lote, HttpStatus.OK);
 	}
 	
 }

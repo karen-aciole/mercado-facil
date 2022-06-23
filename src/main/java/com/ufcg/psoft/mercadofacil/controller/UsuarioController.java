@@ -28,7 +28,7 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService usuarioService; 
 	
-	@RequestMapping(value = "/usuario/", method = RequestMethod.POST)
+	@RequestMapping(value = "/usuario", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastrarUsuario(@RequestBody UsuarioDTO userDTO, UriComponentsBuilder ucBuilder) {
 		String usuarioID;
 		try {
@@ -53,13 +53,13 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/usuarios", method = RequestMethod.GET)
 	public ResponseEntity<?> listarUsuarios() {
-		List<Usuario> usuarios = usuarioService.listarUsuarios();
+		List<String> usuarios = usuarioService.listUsers();
 		
-		return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
+		return new ResponseEntity<List<String>>(usuarios, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/usuario/{cpf}", method = RequestMethod.PUT)
-	public ResponseEntity<?> editarUsuario(@PathVariable("cpf") String cpf, @RequestParam String enderecoDTO, @RequestParam String telefoneDTO, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> editarUsuario(@PathVariable("cpf") String cpf, @RequestParam (required = false) String enderecoDTO, @RequestParam (required = false) String telefoneDTO, UriComponentsBuilder ucBuilder) {
 		Usuario usuario; 
 		try {
 			usuario = usuarioService.getUserById(cpf);

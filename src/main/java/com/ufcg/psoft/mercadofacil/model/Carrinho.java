@@ -5,15 +5,21 @@ import java.util.List;
 
 public class Carrinho {
 
-	private String id;
+	private Usuario usuario;
 
+	private String id; // id do carrinho
 	private List<ItemCompra> itensDoCarrinho;
 
-	public Carrinho(String id, List<ItemCompra> itensDoCarrinho) {
-		this.id = id;
-		this.itensDoCarrinho = itensDoCarrinho;
+	public Carrinho() {
+		this.itensDoCarrinho = new ArrayList<ItemCompra>();
 	}
-	public Carrinho(){}
+	public String getId() {
+		return id;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
 
 	public List<ItemCompra> getItensDoCarrinho() {
 		return itensDoCarrinho;
@@ -23,14 +29,10 @@ public class Carrinho {
 		this.itensDoCarrinho = itensDoCarrinho;
 	}
 
-	public ItemCompra addItemNoCarrinho(Produto produto, int quantidade) {
-		ItemCompra item = new ItemCompra(produto, quantidade);
+	public ItemCompra addItemNoCarrinho(ItemCompra item) {
+		//ItemCompra item = new ItemCompra(produto, quantidade);
 		itensDoCarrinho.add(item);
 		return item;
-	}
-
-	public String getId() {
-		return id;
 	}
 
 	public ItemCompra getItemNoCarrinho(Produto produto) {
@@ -44,10 +46,12 @@ public class Carrinho {
 
 	@Override
 	public String toString() {
-		return "Carrinho [id=" +
-				id +
-				", itensDoCarrinho=" +
-				itensDoCarrinho +
-				"]";
+		String itens = "";
+		for (ItemCompra item : itensDoCarrinho) {
+			itens = item + "\n";
+		}
+		return itens;
+
 	}
+
 }

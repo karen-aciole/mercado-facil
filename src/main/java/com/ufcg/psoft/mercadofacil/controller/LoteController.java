@@ -1,6 +1,9 @@
 package com.ufcg.psoft.mercadofacil.controller;
+import java.time.LocalDate;
 import java.util.List;
 
+import com.ufcg.psoft.mercadofacil.exception.InvalidDateException;
+import com.ufcg.psoft.mercadofacil.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ public class LoteController {
 	
 	@Autowired
 	private LoteService loteService;
+	@Autowired ProdutoService produtoService;
 	
 	//CriaLote
 	@RequestMapping(value = "/lote/", method = RequestMethod.POST)
@@ -33,10 +37,12 @@ public class LoteController {
 		String loteID;
 		
 		try {
+			loteDTO.getDataDeValidade().isAfter(LocalDate.now());
 			loteID = loteService.addLote(loteDTO);
-
 		} catch (ProductNotFoundException e) {
 			return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
+		} catch (InvalidDateException e) {
+			return new ResponseEntity<String>("Data inválida", HttpStatus.UNPROCESSABLE_ENTITY);
 		}
 		return new ResponseEntity<String>("Lote cadastrado com ID: " + loteID, HttpStatus.OK);
 	}
@@ -90,5 +96,4 @@ public class LoteController {
 		
 		return new ResponseEntity<String>("Lote atualizado.\n" + lote, HttpStatus.OK);
 	}
-	
 }

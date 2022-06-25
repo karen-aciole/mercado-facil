@@ -16,12 +16,6 @@ public class ItemCompraRepository {
         this.itensDoCarrinho = new HashMap<String, ItemCompra>();
     }
 
-    public ItemCompra addItemNoCarrinho(Produto produto, int quantidade) {
-        ItemCompra item = new ItemCompra(produto, quantidade);
-        itensDoCarrinho.put(item.getProduto().getId(), item);
-        return item;
-    }
-
     public void addItem(ItemCompra item) {
         this.itensDoCarrinho.put(item.getProduto().getId(), item);
     }
@@ -36,9 +30,5 @@ public class ItemCompraRepository {
 
     public Map<String, ItemCompra> getAll() {
         return itensDoCarrinho;
-    }
-
-    public void clear() {
-        this.itensDoCarrinho.clear();
     }
 }

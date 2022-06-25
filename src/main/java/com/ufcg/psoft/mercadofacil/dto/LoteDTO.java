@@ -1,6 +1,7 @@
 package com.ufcg.psoft.mercadofacil.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 
 public class LoteDTO {
 	
@@ -8,10 +9,10 @@ public class LoteDTO {
 	
 	private int quantidade;
 	
-	private Date dataDeValidade;
+	private LocalDate dataDeValidade;
 	
 	
-	public LoteDTO(String idProduto, int quantidade, Date dataDeValidade) {
+	public LoteDTO(String idProduto, int quantidade, LocalDate dataDeValidade) {
 		
 		this.idProduto = idProduto;
 		this.quantidade = quantidade;
@@ -26,7 +27,7 @@ public class LoteDTO {
 		return quantidade;
 	}
 	
-	public Date getDataDeValidade() { 
+	public LocalDate getDataDeValidade() {
 		return dataDeValidade; 
 	}
 	

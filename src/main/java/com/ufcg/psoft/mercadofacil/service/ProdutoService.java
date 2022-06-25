@@ -49,11 +49,12 @@ public class ProdutoService {
 	private List<Produto> getProdsWithLote() {
 		List<Produto> prods = new ArrayList<Produto>();
 		for (Lote lote : this.loteRep.getAll()) {
-			if (checkIfProductExists(lote.getId()) == true)
-			prods.add(lote.getProduto());
+			if (checkIfProductExists(lote.getId()))
+				prods.add(lote.getProduto());
 		}
 		return(prods);
 	}
+
 
 	public String addProduto(ProdutoDTO prodDTO) {
 		Produto produto = new Produto(prodDTO.getNome(), prodDTO.getFabricante(), prodDTO.getPreco());

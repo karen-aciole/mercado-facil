@@ -2,6 +2,8 @@ package com.ufcg.psoft.mercadofacil.controller;
 
 import java.util.List;
 
+import com.ufcg.psoft.mercadofacil.model.Lote;
+import com.ufcg.psoft.mercadofacil.service.LoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

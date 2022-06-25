@@ -29,10 +29,12 @@ public class Carrinho {
 		this.itensDoCarrinho = itensDoCarrinho;
 	}
 
-	public ItemCompra addItemNoCarrinho(ItemCompra item) {
-		//ItemCompra item = new ItemCompra(produto, quantidade);
+	public void addItemNoCarrinho(ItemCompra item) {
 		itensDoCarrinho.add(item);
-		return item;
+	}
+
+	public void removeItemDoCarrinho(ItemCompra item) {
+		itensDoCarrinho.remove(item);
 	}
 
 	public ItemCompra getItemNoCarrinho(Produto produto) {

@@ -35,7 +35,7 @@ public class LoteService {
 	public List<Lote> listaLotes() {
 		List<Lote> lotesResult = new ArrayList<Lote>();
 		for (Lote lote : this.listarLotes()) {
-			if (!checkIfProductExists(lote.getId()))
+			if (checkIfProductExists(lote.getId()))
 				lotesResult.add(lote);
 		}
 		return(lotesResult);
@@ -70,7 +70,7 @@ public class LoteService {
 	}
 
 	public List<Lote> getLotesByProduct(Produto produto) { // Lista todos os lotes de um produto
-		List<Lote> lotesResult = new ArrayList<Lote>();
+		List<Lote> lotesResult = listarLotes();
 		for (Lote lote : this.listarLotes()) {
 			if (lote.getProduto().equals(produto))
 				lotesResult.add(lote);
@@ -118,5 +118,14 @@ public class LoteService {
 			return false;
 		}
 		return true;
+	}
+
+	public Lote getLotePorProduto(Produto produto) {
+		List<Lote> lotes = this.listarLotes();
+		for (Lote lote : lotes) {
+			if (lote.getProduto().equals(produto))
+				return lote;
+		}
+		return null;
 	}
 }

@@ -2,6 +2,8 @@ package com.ufcg.psoft.mercadofacil.service;
 
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
+import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
+import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
 import com.ufcg.psoft.mercadofacil.repository.ItemCompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,6 @@ public class CarrinhoService {
 		if (carrinho == null) {
 			criaCarrinho(usuario);
 		}
-		//carrinho.setUsuario(usuario);
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade());
 		Lote lote = loteService.getLoteClosestToExpirationDate(produto);
@@ -51,6 +52,24 @@ public class CarrinhoService {
 			outroLote.setQuantidade(outroLote.getQuantidade() - itemCompraDTO.getQuantidade());
 			carrinho.addItemNoCarrinho(item);
 		}
+	}
+
+	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException {
+		Carrinho carrinho = usuario.getCarrinho();
+		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
+
+		if (carrinho.getItemNoCarrinho(produto) == null) throw new ProductNotFoundException("Produto não encontrado no carrinho");
+
+		ItemCompra itemDocarrinho = carrinho.getItemNoCarrinho(produto);
+
+		if (itemDocarrinho.getQuantidade() < itemCompraDTO.getQuantidade()) throw new QuantidadeInvalidaException("Quantidade não existe no carrinho");
+
+		carrinho.removeItemDoCarrinho(carrinho.getItemNoCarrinho(produto));
+		Lote lote = loteService.getLoteClosestToExpirationDate(produto);
+		lote.setQuantidade(lote.getQuantidade() + itemCompraDTO.getQuantidade());
+
+		if (carrinho.getItensDoCarrinho().isEmpty())
+			carrinhoRepo.removeCarrinho(carrinho.getId());
 	}
 
 	public Carrinho getCarrinho(Usuario usuario) {

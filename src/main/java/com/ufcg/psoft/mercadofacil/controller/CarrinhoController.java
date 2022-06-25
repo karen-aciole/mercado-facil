@@ -5,6 +5,7 @@ import java.util.List;
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
+import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
 import com.ufcg.psoft.mercadofacil.model.ItemCompra;
 import com.ufcg.psoft.mercadofacil.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +54,20 @@ public class CarrinhoController {
 
 		return new ResponseEntity<String>("Produto adicionado no carrinho!", HttpStatus.OK);
 	}
+
+	@RequestMapping(value = "carrinho/{idUsuario}/remove/", method = RequestMethod.DELETE)
+	public ResponseEntity<?> removeProdutoDoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO, UriComponentsBuilder ucBuilder)
+			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException {
+		Usuario user = usuarioService.getUserById(idUsuario);
+		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
+
+		Produto produto = produtoService.getProdutoById(itemCompraDTO.getIdProduto());
+		if (produto == null) throw new ProductNotFoundException("Produto não existe no carrinho");
+
+		carrinhoService.removeItensDoCarrinho(user, itemCompraDTO);
+
+		return new ResponseEntity<String>("Produto removido do carrinho!", HttpStatus.OK);
+	}
+
 	
 }

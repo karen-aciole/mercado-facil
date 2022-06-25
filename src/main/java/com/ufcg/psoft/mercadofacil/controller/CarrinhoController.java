@@ -66,7 +66,7 @@ public class CarrinhoController {
 
 		carrinhoService.removeItensDoCarrinho(user, itemCompraDTO);
 
-		return new ResponseEntity<String>("Produto removido do carrinho!", HttpStatus.OK);
+		return new ResponseEntity<String>("Produto removido do carrinho!\n" + user.getCarrinho().getItensDoCarrinho(), HttpStatus.OK);
 	}
 
 	

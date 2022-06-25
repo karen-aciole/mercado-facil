@@ -46,12 +46,11 @@ public class CarrinhoService {
 
 		if (lote.getQuantidade() >= itemCompraDTO.getQuantidade()) {
 			lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
-			carrinho.addItemNoCarrinho(item);
 		} else {
 			Lote outroLote = loteService.getLoteByQuantidade(itemCompraDTO.getQuantidade());
 			outroLote.setQuantidade(outroLote.getQuantidade() - itemCompraDTO.getQuantidade());
-			carrinho.addItemNoCarrinho(item);
 		}
+		carrinho.addItemNoCarrinho(item);
 	}
 
 	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException {
@@ -64,9 +63,13 @@ public class CarrinhoService {
 
 		if (itemDocarrinho.getQuantidade() < itemCompraDTO.getQuantidade()) throw new QuantidadeInvalidaException("Quantidade não existe no carrinho");
 
-		carrinho.removeItemDoCarrinho(carrinho.getItemNoCarrinho(produto));
-		Lote lote = loteService.getLoteClosestToExpirationDate(produto);
-		lote.setQuantidade(lote.getQuantidade() + itemCompraDTO.getQuantidade());
+		if (itemDocarrinho.getQuantidade() == itemCompraDTO.getQuantidade()) {
+			carrinho.removeItemDoCarrinho(carrinho.getItemNoCarrinho(produto));
+		} else {
+			itemDocarrinho.setQuantidade(itemDocarrinho.getQuantidade() - itemCompraDTO.getQuantidade());
+			Lote lote = loteService.getLoteClosestToExpirationDate(produto);
+			lote.setQuantidade(lote.getQuantidade() + itemCompraDTO.getQuantidade());
+		}
 
 		if (carrinho.getItensDoCarrinho().isEmpty())
 			carrinhoRepo.removeCarrinho(carrinho.getId());

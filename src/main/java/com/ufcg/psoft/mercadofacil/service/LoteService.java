@@ -42,10 +42,7 @@ public class LoteService {
 		return(lotesResult);
 	}
 	
-	public String addLote(LoteDTO loteDTO) throws ProductNotFoundException, InvalidDateException, QuantidadeInvalidaException {
-		if (loteDTO.getQuantidade() <= 0) {
-			throw new QuantidadeInvalidaException("Quantidade deve ser maior que zero");
-		}
+	public String addLote(LoteDTO loteDTO) throws ProductNotFoundException, InvalidDateException {
 
 		Produto prod = this.produtoRep.getProd(loteDTO.getIdProduto());
 		

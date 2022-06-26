@@ -35,6 +35,10 @@ public class LoteController {
 	public ResponseEntity<?> criarLote(@RequestBody LoteDTO loteDTO, UriComponentsBuilder ucBuilder) {
 		
 		String loteID;
+
+		if (loteDTO.getQuantidade() <= 0) {
+			return new ResponseEntity<String>("Quantidade inválida", HttpStatus.BAD_REQUEST);
+		}
 		
 		try {
 			loteDTO.getDataDeValidade().isAfter(LocalDate.now());

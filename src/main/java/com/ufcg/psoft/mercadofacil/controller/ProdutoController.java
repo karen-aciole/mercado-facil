@@ -1,5 +1,6 @@
 package com.ufcg.psoft.mercadofacil.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,10 @@ public class ProdutoController {
 	//CRIA PRODUTO
 	@RequestMapping(value = "/produto/", method = RequestMethod.POST)
 	public ResponseEntity<?> criarProduto(@RequestBody ProdutoDTO produtoDTO, UriComponentsBuilder ucBuilder) {
+
+		if (produtoDTO.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
+			return new ResponseEntity<String>("Preço inválido", HttpStatus.BAD_REQUEST);
+		}
 
 		String prodID = produtoService.addProduto(produtoDTO);
 		return new ResponseEntity<String>("Produto cadastrado com ID: " + prodID, HttpStatus.CREATED);

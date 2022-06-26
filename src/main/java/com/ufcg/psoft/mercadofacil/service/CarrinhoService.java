@@ -1,6 +1,7 @@
 package com.ufcg.psoft.mercadofacil.service;
 
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
+import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import com.ufcg.psoft.mercadofacil.model.*;
 import com.ufcg.psoft.mercadofacil.repository.CarrinhoRepository;
 import com.ufcg.psoft.mercadofacil.repository.ProdutoRepository;
+
+import java.math.BigDecimal;
 
 @Service
 public class CarrinhoService {
@@ -34,7 +37,7 @@ public class CarrinhoService {
 	}
 	public void adicionaItensNoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) {
 		Carrinho carrinho = usuario.getCarrinho();
-		if (carrinho == null) {
+		if (carrinho.getItensDoCarrinho().isEmpty()) {
 			criaCarrinho(usuario);
 		}
 
@@ -66,20 +69,45 @@ public class CarrinhoService {
 			lote.setQuantidade(lote.getQuantidade() + itemCompraDTO.getQuantidade());
 		}
 
-		if (carrinho.getItensDoCarrinho().isEmpty())
+		if (carrinho.getItensDoCarrinho().isEmpty()) {
+			carrinho.limpaCarrinho();
 			carrinhoRepo.removeCarrinho(carrinho.getId());
+		}
 	}
 
-	public void descartaCarrinho(Usuario usuario) throws LoteNotFoundException {
+	public void descartaCarrinho(Usuario usuario) throws LoteNotFoundException, CarrinhoVazioException {
 		Carrinho carrinho = usuario.getCarrinho();
-		if (carrinho == null)
-			throw new IllegalArgumentException("Este usuário não possui carrinho ativo.");
+		if (carrinho.getItensDoCarrinho().isEmpty())
+			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
 
 		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
 			Lote lote = loteService.getLoteById(item.getIdLote());
 			lote.setQuantidade(lote.getQuantidade() + item.getQuantidade());
 		}
+		carrinho.limpaCarrinho();
 		carrinhoRepo.removeCarrinho(carrinho.getId());
+	}
+
+	public Compra finalizaCompra(Usuario usuario) throws CarrinhoVazioException {
+		Carrinho carrinho = usuario.getCarrinho();
+		if (carrinho.getItensDoCarrinho().isEmpty())
+			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
+
+		BigDecimal valorDaCompra = calculaValorTotalDoCarrinho(carrinho);
+		Compra compra = new Compra(carrinho, valorDaCompra);
+
+		carrinho.limpaCarrinho();
+		carrinhoRepo.removeCarrinho(carrinho.getId());
+
+		return compra;
+	}
+
+	private BigDecimal calculaValorTotalDoCarrinho(Carrinho carrinho) {
+		BigDecimal valorTotal = new BigDecimal(0);
+		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
+			valorTotal = valorTotal.add(item.getProduto().getPreco().multiply(new BigDecimal(item.getQuantidade())));
+		}
+		return valorTotal;
 	}
 
 	public Carrinho getCarrinho(Usuario usuario) {

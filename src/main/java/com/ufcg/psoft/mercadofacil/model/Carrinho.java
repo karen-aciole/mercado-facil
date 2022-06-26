@@ -45,6 +45,10 @@ public class Carrinho {
 		return null;
 	}
 
+	public void limpaCarrinho () {
+		this.itensDoCarrinho.clear();
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder itens = new StringBuilder();

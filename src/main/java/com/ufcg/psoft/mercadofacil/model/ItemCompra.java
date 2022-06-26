@@ -38,7 +38,7 @@ public class ItemCompra {
 
     @Override
     public String toString() {
-        return "Item: " + getProduto().getNome() + " - Quantidade: " + getQuantidade();
+        return "\nItem: " + getProduto().getNome() + " - Quantidade: " + getQuantidade();
     }
 }
 

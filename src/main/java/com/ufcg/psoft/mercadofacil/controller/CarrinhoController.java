@@ -3,9 +3,8 @@ package com.ufcg.psoft.mercadofacil.controller;
 import java.util.List;
 
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
-import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
-import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
-import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
+import com.ufcg.psoft.mercadofacil.exception.*;
+import com.ufcg.psoft.mercadofacil.model.Compra;
 import com.ufcg.psoft.mercadofacil.model.ItemCompra;
 import com.ufcg.psoft.mercadofacil.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Usuario;
 import com.ufcg.psoft.mercadofacil.service.CarrinhoService;
 import com.ufcg.psoft.mercadofacil.service.ProdutoService;
@@ -45,38 +43,56 @@ public class CarrinhoController {
 			throws ProductNotFoundException, UsuarioNotFoundException {
 
 		Usuario user = usuarioService.getUserById(idUsuario);
-		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
+		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
 
 		Produto produto = produtoService.getProdutoById(itemDTO.getIdProduto());
-		if (produto == null) throw new ProductNotFoundException("Produto não encontrado");
+		if (produto == null) return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
 
 		carrinhoService.adicionaItensNoCarrinho(user, itemDTO);
 
-		return new ResponseEntity<String>("Item adicionado no carrinho!" + user.getCarrinho(), HttpStatus.OK);
+		return new ResponseEntity<String>("Item adicionado no carrinho!", HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "carrinho/{idUsuario}/removeItem/", method = RequestMethod.DELETE)
 	public ResponseEntity<?> removeProdutoDoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO)
 			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
 		Usuario user = usuarioService.getUserById(idUsuario);
-		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
+		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
 
 		Produto produto = produtoService.getProdutoById(itemCompraDTO.getIdProduto());
-		if (produto == null) throw new ProductNotFoundException("Produto não existe no carrinho");
+		if (produto == null) return new ResponseEntity<String>("Produto não existe no carrinho", HttpStatus.NO_CONTENT);
 
 		carrinhoService.removeItensDoCarrinho(user, itemCompraDTO);
 
-		return new ResponseEntity<String>("Item removido do carrinho!\n", HttpStatus.OK);
+		return new ResponseEntity<String>("Item removido do carrinho!", HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "carrinho/{idUsuario}/descarta", method = RequestMethod.DELETE)
+	@RequestMapping(value = "carrinho/{idUsuario}/finalizar", method = RequestMethod.POST)
+	public ResponseEntity<?> finalizarCarrinho(@PathVariable ("idUsuario") String idUsuario) throws UsuarioNotFoundException {
+		Usuario user = usuarioService.getUserById(idUsuario);
+		Compra compra;
+		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+		try {
+			compra = carrinhoService.finalizaCompra(user);
+		} catch (CarrinhoVazioException e) {
+			return new ResponseEntity<String>("Carrinho vazio", HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<String>("Carrinho finalizado com sucesso!\n" + compra, HttpStatus.OK);
+	}
+
+
+	@RequestMapping(value = "carrinho/{idUsuario}/descartar", method = RequestMethod.DELETE)
 	public ResponseEntity<?> descartaCarrinho(@PathVariable ("idUsuario") String idUsuario) throws UsuarioNotFoundException, LoteNotFoundException {
 		Usuario user = usuarioService.getUserById(idUsuario);
-		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
+		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
 
-		carrinhoService.descartaCarrinho(user);
+		try {
+			carrinhoService.descartaCarrinho(user);
+		} catch (CarrinhoVazioException e) {
+			return new ResponseEntity<String>("Carrinho vazio", HttpStatus.NO_CONTENT);
+		}
+
 		return new ResponseEntity<String>("Carrinho descartado!", HttpStatus.OK);
 	}
-
 	
 }

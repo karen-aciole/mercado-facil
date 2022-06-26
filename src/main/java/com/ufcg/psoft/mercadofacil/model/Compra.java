@@ -12,7 +12,7 @@ public class Compra {
 
     private Carrinho carrinho;
 
-    Compra(Usuario usuario, Carrinho carrinho, BigDecimal valorDaCompra, LocalDate dataDaCompra, String idDaCompra) {
+    public Compra(Carrinho carrinho, BigDecimal valorDaCompra) {
         this.usuario = usuario;
         this.carrinho = carrinho;
         this.valorDaCompra = valorDaCompra;
@@ -38,7 +38,7 @@ public class Compra {
 
     @Override
     public String toString() {
-        return "Compra: " + getIdDaCompra() +
+        return "ID da Compra: " + getIdDaCompra() +
                 "\n Data da compra: " + getDataDaCompra() +
                 "\n Itens da compra: " + getCarrinho() +
                 "\n Valor total da compra: " + getValorDaCompra();

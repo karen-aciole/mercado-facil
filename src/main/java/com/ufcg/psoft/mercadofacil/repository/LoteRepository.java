@@ -25,8 +25,8 @@ public class LoteRepository {
 		this.lotes.remove(id);
 	}
 	
-	public void editLote(Lote lote) {
-		this.lotes.replace(lote.getId(), lote);
+	public void editLote(String id, Lote lote) {
+		this.lotes.replace(id, lote);
 	}
 	
 	public String addLote(Lote lote) {

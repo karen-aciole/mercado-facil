@@ -4,7 +4,8 @@ public class LoteDTO {
 	
 	private String idProduto;
 	
-	private int quantidade; 
+	private int quantidade;
+	
 	
 	public LoteDTO(String idProduto, int quantidade) {
 		
@@ -18,5 +19,9 @@ public class LoteDTO {
 
 	public int getQuantidade() {
 		return quantidade;
+	}
+	
+	public String toString() { 
+		return "ID do produto: " + getIdProduto() + " - Quantidade" + getQuantidade();
 	}
 }

@@ -29,8 +29,8 @@ public class ProdutoRepository {
 		this.produtos.remove(id);
 	}
 	
-	public void editProd(Produto prod) {
-		this.produtos.replace(prod.getId(), prod);
+	public void editProd(String id, Produto prod) {
+		this.produtos.replace(id, prod);
 	}
 	
 	public String addProduto(Produto prod) {

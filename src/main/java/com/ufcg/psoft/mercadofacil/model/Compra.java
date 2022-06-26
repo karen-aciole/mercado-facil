@@ -2,6 +2,7 @@ package com.ufcg.psoft.mercadofacil.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 public class Compra {
@@ -10,11 +11,11 @@ public class Compra {
     private Usuario usuario;
     private BigDecimal valorDaCompra;
 
-    private Carrinho carrinho;
+    private List<ItemCompra> itensDaCompra;
 
-    public Compra(Carrinho carrinho, BigDecimal valorDaCompra) {
+    public Compra(List<ItemCompra> itensDaCompra, BigDecimal valorDaCompra) {
         this.usuario = usuario;
-        this.carrinho = carrinho;
+        this.itensDaCompra = itensDaCompra;
         this.valorDaCompra = valorDaCompra;
         this.dataDaCompra = LocalDate.now();
         this.idDaCompra = UUID.randomUUID().toString();
@@ -32,15 +33,22 @@ public class Compra {
         return valorDaCompra;
     }
 
-    public Carrinho getCarrinho() {
-        return carrinho;
+    public List<ItemCompra> itensDaCompra() {
+        return itensDaCompra;
     }
 
+    public String listaItensDaCompraFormatada() {
+        StringBuilder sb = new StringBuilder();
+        for (ItemCompra item : itensDaCompra) {
+            sb.append(item.toString()).append("\n");
+        }
+        return sb.toString();
+    }
     @Override
     public String toString() {
         return "ID da Compra: " + getIdDaCompra() +
                 "\n Data da compra: " + getDataDaCompra() +
-                "\n Itens da compra: " + getCarrinho() +
+                "\n Itens da compra: \n" +  listaItensDaCompraFormatada() +
                 "\n Valor total da compra: " + getValorDaCompra();
     }
 }

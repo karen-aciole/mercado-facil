@@ -57,6 +57,7 @@ public class CarrinhoController {
 	@RequestMapping(value = "carrinho/{idUsuario}/removeItem/", method = RequestMethod.DELETE)
 	public ResponseEntity<?> removeProdutoDoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO)
 			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
+
 		Usuario user = usuarioService.getUserById(idUsuario);
 		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
 
@@ -70,19 +71,20 @@ public class CarrinhoController {
 		return new ResponseEntity<String>("Item removido do carrinho!", HttpStatus.OK);
 	}
 
+
 	@RequestMapping(value = "carrinho/{idUsuario}/finalizar", method = RequestMethod.POST)
 	public ResponseEntity<?> finalizarCarrinho(@PathVariable ("idUsuario") String idUsuario) throws UsuarioNotFoundException {
 		Usuario user = usuarioService.getUserById(idUsuario);
 		Compra compra;
 		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+
 		try {
-			compra = carrinhoService.finalizaCompra(user);
+			compra = carrinhoService.finalizaCarrinho(user);
 		} catch (CarrinhoVazioException e) {
 			return new ResponseEntity<String>("Carrinho vazio", HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<String>("Carrinho finalizado com sucesso!\n" + compra, HttpStatus.OK);
 	}
-
 
 	@RequestMapping(value = "carrinho/{idUsuario}/descartar", method = RequestMethod.DELETE)
 	public ResponseEntity<?> descartaCarrinho(@PathVariable ("idUsuario") String idUsuario) throws UsuarioNotFoundException, LoteNotFoundException {

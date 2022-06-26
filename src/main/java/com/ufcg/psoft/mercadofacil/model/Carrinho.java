@@ -2,6 +2,7 @@ package com.ufcg.psoft.mercadofacil.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Carrinho {
 
@@ -12,7 +13,9 @@ public class Carrinho {
 
 	public Carrinho() {
 		this.itensDoCarrinho = new ArrayList<>();
+		this.id = UUID.randomUUID().toString();
 	}
+
 	public String getId() {
 		return id;
 	}
@@ -45,7 +48,7 @@ public class Carrinho {
 		return null;
 	}
 
-	public void limpaCarrinho () {
+	public void limpaCarrinho() {
 		this.itensDoCarrinho.clear();
 	}
 

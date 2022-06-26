@@ -70,7 +70,7 @@ public class LoteService {
 		return(lote);
 	}
 
-	public List<Lote> getLotesByProduct(Produto produto) { // Lista todos os lotes de um produto
+	private List<Lote> getLotesByProduct(Produto produto) { // Lista todos os lotes de um produto
 		List<Lote> lotesResult = listaLotes();
 		for (Lote lote : this.listaLotes()) {
 			if (lote.getProduto().equals(produto))
@@ -80,12 +80,13 @@ public class LoteService {
 	}
 
 	public Lote getLoteClosestToExpirationDate(Produto produto, int quantidade) {// Retorna o lote do produto mais próximo a data de validade
-		List<Lote> lotesOrdenadedByExpirationDate = this.getLotesByProduct(produto);
-		lotesOrdenadedByExpirationDate.sort(Comparator.comparing(Lote::getDataDeValidade));
-		Collections.reverse(lotesOrdenadedByExpirationDate);
 
-		for (Lote lote : lotesOrdenadedByExpirationDate) {
-			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade)
+		List<Lote> lotesDoProduto = listaLotes();
+
+		lotesDoProduto.sort(Comparator.comparing(Lote::getDataDeValidade)); // Ordena por data de validade
+
+		for (Lote lote : lotesDoProduto) {
+			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade && lote.getProduto().equals(produto))
 				return lote;
 		}
 		return null;

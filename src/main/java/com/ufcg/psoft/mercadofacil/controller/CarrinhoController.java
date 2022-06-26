@@ -39,16 +39,17 @@ public class CarrinhoController {
 	@Autowired
 	ProdutoService produtoService;
 	@RequestMapping(value = "carrinho/{idUsuario}/addItem/", method = RequestMethod.POST)
-	public ResponseEntity<?> adicionaProdutoNoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemDTO, UriComponentsBuilder ucBuilder)
-			throws ProductNotFoundException, UsuarioNotFoundException {
+	public ResponseEntity<?> adicionaProdutoNoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO, UriComponentsBuilder ucBuilder)
+			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException {
 
 		Usuario user = usuarioService.getUserById(idUsuario);
 		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
 
-		Produto produto = produtoService.getProdutoById(itemDTO.getIdProduto());
+		if (itemCompraDTO.getQuantidade() <= 0) return new ResponseEntity<String> ("Quantidade inválida", HttpStatus.BAD_REQUEST);
+		Produto produto = produtoService.getProdutoById(itemCompraDTO.getIdProduto());
 		if (produto == null) return new ResponseEntity<String>("Produto não encontrado", HttpStatus.NO_CONTENT);
 
-		carrinhoService.adicionaItensNoCarrinho(user, itemDTO);
+		carrinhoService.adicionaItensNoCarrinho(user, itemCompraDTO);
 
 		return new ResponseEntity<String>("Item adicionado no carrinho!", HttpStatus.OK);
 	}
@@ -58,6 +59,8 @@ public class CarrinhoController {
 			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
 		Usuario user = usuarioService.getUserById(idUsuario);
 		if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+
+		if (itemCompraDTO.getQuantidade() <= 0) return new ResponseEntity<String> ("Quantidade inválida", HttpStatus.BAD_REQUEST);
 
 		Produto produto = produtoService.getProdutoById(itemCompraDTO.getIdProduto());
 		if (produto == null) return new ResponseEntity<String>("Produto não existe no carrinho", HttpStatus.NO_CONTENT);

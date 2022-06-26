@@ -35,7 +35,7 @@ public class CarrinhoService {
 		usuario.setCarrinho(carrinho);
 		this.carrinhoRepo.adicionaCarrinho(carrinho);
 	}
-	public void adicionaItensNoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) {
+	public void adicionaItensNoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws QuantidadeInvalidaException {
 		Carrinho carrinho = usuario.getCarrinho();
 		if (carrinho.getItensDoCarrinho().isEmpty()) {
 			criaCarrinho(usuario);
@@ -44,7 +44,7 @@ public class CarrinhoService {
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade());
 		Lote lote = loteService.getLoteClosestToExpirationDate(produto, itemCompraDTO.getQuantidade());
-
+		if (lote == null) throw new QuantidadeInvalidaException("Quantidade indisponível");
 		lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
 		item.setIdLote(lote.getId());
 

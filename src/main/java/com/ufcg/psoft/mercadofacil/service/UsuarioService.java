@@ -29,10 +29,12 @@ public class UsuarioService {
 	}
 	
 	public String createUser(UsuarioDTO userDTO) throws UsuarioAlreadyExists  {
-		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone());
-		
+
+		if(userDTO.getCpf().length() != 11) throw new IllegalArgumentException("CPF inválido - deve conter 11 dígitos");
+
 		if (userRepo.getUser(userDTO.getCpf())!= null) throw new UsuarioAlreadyExists("Usuário já está cadastrado!");
-		
+
+		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone());
 		this.userRepo.addUser(usuario);
 		
 		return usuario.getCpf();

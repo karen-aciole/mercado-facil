@@ -1,7 +1,7 @@
 package com.ufcg.psoft.mercadofacil.model;
 
+
 public class Usuario {
-	
 	private String cpf; 
 	private String nome; 
 	private String endereco; 

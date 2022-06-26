@@ -83,7 +83,9 @@ public class ProdutoService {
 		this.prodRep.editProd(produto.getId(), produto);
 	}
 	
-	public void deletProduto(String id) throws ProductNotFoundException { 
+	public void deletProduto(String id) throws ProductNotFoundException {
+		Produto prod = this.prodRep.getProd(id);
+		if(prod == null) throw new ProductNotFoundException("Produto: " + id + " não encontrado");
 		this.prodRep.delProd(id);
 	}
 	

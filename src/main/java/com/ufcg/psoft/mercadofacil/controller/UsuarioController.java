@@ -31,6 +31,9 @@ public class UsuarioController {
 	@RequestMapping(value = "/usuario", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastrarUsuario(@RequestBody UsuarioDTO userDTO, UriComponentsBuilder ucBuilder) {
 		String usuarioID;
+		if (userDTO.getCpf().length() != 11)
+			return new ResponseEntity<String>("CPF inválido: deve conter 11 dígitos", HttpStatus.BAD_REQUEST);
+
 		try {
 			usuarioID = usuarioService.createUser(userDTO);
 		} catch (UsuarioAlreadyExists e) {

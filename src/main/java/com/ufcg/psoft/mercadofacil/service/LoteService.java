@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.ufcg.psoft.mercadofacil.exception.InvalidDateException;
+import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,11 @@ public class LoteService {
 		return(lotesResult);
 	}
 	
-	public String addLote(LoteDTO loteDTO) throws ProductNotFoundException, InvalidDateException {
-		
+	public String addLote(LoteDTO loteDTO) throws ProductNotFoundException, InvalidDateException, QuantidadeInvalidaException {
+		if (loteDTO.getQuantidade() <= 0) {
+			throw new QuantidadeInvalidaException("Quantidade deve ser maior que zero");
+		}
+
 		Produto prod = this.produtoRep.getProd(loteDTO.getIdProduto());
 		
 		if(prod == null) throw new ProductNotFoundException("Produto: " + loteDTO.getIdProduto() + " não encontrado");

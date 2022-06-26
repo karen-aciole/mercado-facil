@@ -41,10 +41,14 @@ public class CarrinhoService {
 			criaCarrinho(usuario);
 		}
 
+		if (itemCompraDTO.getQuantidade() < 0) throw new QuantidadeInvalidaException("Quantidade inválida");
+		
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade());
 		Lote lote = loteService.getLoteClosestToExpirationDate(produto, itemCompraDTO.getQuantidade());
+
 		if (lote == null) throw new QuantidadeInvalidaException("Quantidade indisponível");
+
 		lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
 		item.setIdLote(lote.getId());
 
@@ -54,6 +58,8 @@ public class CarrinhoService {
 	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
 		Carrinho carrinho = usuario.getCarrinho();
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
+
+		if (itemCompraDTO.getQuantidade() < 0) throw new QuantidadeInvalidaException("Quantidade inválida");
 
 		if (carrinho.getItemNoCarrinho(produto) == null) throw new ProductNotFoundException("Produto não encontrado no carrinho");
 

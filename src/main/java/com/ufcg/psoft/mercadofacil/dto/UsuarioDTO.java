@@ -1,7 +1,5 @@
 package com.ufcg.psoft.mercadofacil.dto;
 
-import com.ufcg.psoft.mercadofacil.model.Carrinho;
-
 public class UsuarioDTO {
 	
 	private String cpf;

@@ -20,7 +20,7 @@ public class UsuarioService {
 	
 	// Queremos apenas o CPF e o nome dos usuários
 	public List<String> listUsers() {
-		List<String> users = new ArrayList<String>();
+		List<String> users = new ArrayList<>();
 		for (Usuario usuario : this.userRepo.getAll()) {
 			String userList = "CPF do usuário: " + usuario.getCpf() + " - Nome do usuário: "+ usuario.getNome();
 			users.add(userList); 

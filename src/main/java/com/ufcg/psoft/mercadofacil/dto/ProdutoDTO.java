@@ -1,14 +1,16 @@
 package com.ufcg.psoft.mercadofacil.dto;
 
+import java.math.BigDecimal;
+
 public class ProdutoDTO {
 	
 	private String nome; 
 	
 	private String fabricante;
 	
-	private double preco;
+	private BigDecimal preco;
 
-	public ProdutoDTO(String nome, String fabricante, double preco) {
+	public ProdutoDTO(String nome, String fabricante, BigDecimal preco) {
 		this.nome = nome;
 		this.fabricante = fabricante;
 		this.preco = preco;
@@ -23,7 +25,7 @@ public class ProdutoDTO {
 		return fabricante;
 	}
 	
-	public double getPreco() {
+	public BigDecimal getPreco() {
 		return preco;
 	}
 	

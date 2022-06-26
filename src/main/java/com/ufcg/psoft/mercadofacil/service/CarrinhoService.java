@@ -12,9 +12,6 @@ import com.ufcg.psoft.mercadofacil.model.*;
 import com.ufcg.psoft.mercadofacil.repository.CarrinhoRepository;
 import com.ufcg.psoft.mercadofacil.repository.ProdutoRepository;
 
-import java.util.List;
-
-
 @Service
 public class CarrinhoService {
 	
@@ -40,20 +37,18 @@ public class CarrinhoService {
 		if (carrinho == null) {
 			criaCarrinho(usuario);
 		}
+
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade());
-		Lote lote = loteService.getLoteClosestToExpirationDate(produto);
+		Lote lote = loteService.getLoteClosestToExpirationDate(produto, itemCompraDTO.getQuantidade());
 
-		if (lote.getQuantidade() >= itemCompraDTO.getQuantidade()) {
-			lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
-		} else {
-			Lote outroLote = loteService.getLoteByQuantidade(itemCompraDTO.getQuantidade());
-			outroLote.setQuantidade(outroLote.getQuantidade() - itemCompraDTO.getQuantidade());
-		}
+		lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
+		item.setIdLote(lote.getId());
+
 		carrinho.addItemNoCarrinho(item);
 	}
 
-	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException {
+	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
 		Carrinho carrinho = usuario.getCarrinho();
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 
@@ -67,12 +62,24 @@ public class CarrinhoService {
 			carrinho.removeItemDoCarrinho(carrinho.getItemNoCarrinho(produto));
 		} else {
 			itemDocarrinho.setQuantidade(itemDocarrinho.getQuantidade() - itemCompraDTO.getQuantidade());
-			Lote lote = loteService.getLoteClosestToExpirationDate(produto);
+			Lote lote = loteService.getLoteById(itemDocarrinho.getIdLote());
 			lote.setQuantidade(lote.getQuantidade() + itemCompraDTO.getQuantidade());
 		}
 
 		if (carrinho.getItensDoCarrinho().isEmpty())
 			carrinhoRepo.removeCarrinho(carrinho.getId());
+	}
+
+	public void descartaCarrinho(Usuario usuario) throws LoteNotFoundException {
+		Carrinho carrinho = usuario.getCarrinho();
+		if (carrinho == null)
+			throw new IllegalArgumentException("Este usuário não possui carrinho ativo.");
+
+		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
+			Lote lote = loteService.getLoteById(item.getIdLote());
+			lote.setQuantidade(lote.getQuantidade() + item.getQuantidade());
+		}
+		carrinhoRepo.removeCarrinho(carrinho.getId());
 	}
 
 	public Carrinho getCarrinho(Usuario usuario) {

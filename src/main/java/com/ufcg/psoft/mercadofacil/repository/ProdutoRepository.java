@@ -14,7 +14,7 @@ public class ProdutoRepository {
 	private Map<String, Produto> produtos;
 	
 	public ProdutoRepository() {
-		this.produtos = new HashMap<String, Produto>();
+		this.produtos = new HashMap<>();
 	}
 
 	public Collection<Produto> getAll() {

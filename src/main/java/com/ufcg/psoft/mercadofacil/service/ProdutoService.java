@@ -1,5 +1,6 @@
 package com.ufcg.psoft.mercadofacil.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ProdutoService {
 	private ProdutoRepository prodRep;
 
 	public List<Produto> listarProdutos() {
-		return new ArrayList<Produto>(prodRep.getAll());
+		return new ArrayList<>(prodRep.getAll());
 	}
 	
 	public List<Produto> listarProdsLoteByName(String nome) {
@@ -37,7 +38,7 @@ public class ProdutoService {
 	}
 
 	private List<Produto> getProdsByName(String nome, Collection<Produto> prods) {
-		List<Produto> prodsResult = new ArrayList<Produto>();
+		List<Produto> prodsResult = new ArrayList<>();
 		for (Produto produto : prods) {
 			if(produto.getNome().toLowerCase().contains(nome.toLowerCase())) {
 				prodsResult.add(produto);
@@ -47,7 +48,7 @@ public class ProdutoService {
 	}
 	
 	private List<Produto> getProdsWithLote() {
-		List<Produto> prods = new ArrayList<Produto>();
+		List<Produto> prods = new ArrayList<>();
 		for (Lote lote : this.loteRep.getAll()) {
 			if (checkIfProductExists(lote.getId()))
 				prods.add(lote.getProduto());
@@ -57,6 +58,9 @@ public class ProdutoService {
 
 
 	public String addProduto(ProdutoDTO prodDTO) {
+		if (prodDTO.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
+			throw new IllegalArgumentException("Preço inválido");
+		}
 		Produto produto = new Produto(prodDTO.getNome(), prodDTO.getFabricante(), prodDTO.getPreco());
 		
 		this.prodRep.addProduto(produto);
@@ -75,7 +79,7 @@ public class ProdutoService {
 	public void editProduto(ProdutoDTO prodDTO, Produto produto) throws ProductNotFoundException { 
 		produto.setFabricante(!prodDTO.getFabricante().isBlank() ? prodDTO.getFabricante() : produto.getFabricante());
 		produto.setNome(!prodDTO.getNome().isBlank() ? prodDTO.getNome() : produto.getNome());
-		produto.setPreco(prodDTO.getPreco() >= 0 ? prodDTO.getPreco() : produto.getPreco());
+		produto.setPreco(prodDTO.getPreco().compareTo(BigDecimal.ZERO) > 0 ? prodDTO.getPreco() : produto.getPreco());
 		this.prodRep.editProd(produto.getId(), produto);
 	}
 	

@@ -1,7 +1,6 @@
 package com.ufcg.psoft.mercadofacil.repository;
 
 import com.ufcg.psoft.mercadofacil.model.ItemCompra;
-import com.ufcg.psoft.mercadofacil.model.Produto;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.ufcg.psoft.mercadofacil.model.Produto;
 import org.springframework.stereotype.Repository;
 
 import com.ufcg.psoft.mercadofacil.model.Carrinho;
@@ -15,7 +14,7 @@ public class CarrinhoRepository {
 	private Map<String, Carrinho> carrinhos;
 	
 	public CarrinhoRepository() {
-		this.carrinhos = new HashMap<String, Carrinho>();
+		this.carrinhos = new HashMap<>();
 	}
 	public void adicionaCarrinho(Carrinho carrinho) {
 		this.carrinhos.put(carrinho.getId(), carrinho);

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.ufcg.psoft.mercadofacil.model.Carrinho;
 import com.ufcg.psoft.mercadofacil.model.Usuario;
 
 @Repository
@@ -15,7 +14,7 @@ public class UsuarioRepository {
 	private Map<String, Usuario> usuarios; 
 	
 	public UsuarioRepository() {
-		this.usuarios = new HashMap<String, Usuario>();
+		this.usuarios = new HashMap<>();
 	}
 	
 	public Collection<Usuario> getAll() {

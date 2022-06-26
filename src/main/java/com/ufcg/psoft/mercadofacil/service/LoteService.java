@@ -29,11 +29,11 @@ public class LoteService {
 	
 	
 	private List<Lote> listarLotes() {
-		return new ArrayList<Lote>(loteRep.getAll());
+		return new ArrayList<>(loteRep.getAll());
 	}
 	
 	public List<Lote> listaLotes() {
-		List<Lote> lotesResult = new ArrayList<Lote>();
+		List<Lote> lotesResult = new ArrayList<>();
 		for (Lote lote : this.listarLotes()) {
 			if (checkIfProductExists(lote.getId()))
 				lotesResult.add(lote);
@@ -70,35 +70,22 @@ public class LoteService {
 	}
 
 	public List<Lote> getLotesByProduct(Produto produto) { // Lista todos os lotes de um produto
-		List<Lote> lotesResult = listarLotes();
-		for (Lote lote : this.listarLotes()) {
+		List<Lote> lotesResult = listaLotes();
+		for (Lote lote : this.listaLotes()) {
 			if (lote.getProduto().equals(produto))
 				lotesResult.add(lote);
 		}
 		return lotesResult;
 	}
 
-	public Lote getLoteClosestToExpirationDate(Produto produto) {// Retorna o lote mais próximo a data de validade
-		List<Lote> lotesOrdenadedByExpirationDate = new ArrayList<Lote>();
-		lotesOrdenadedByExpirationDate = this.getLotesByProduct(produto);
+	public Lote getLoteClosestToExpirationDate(Produto produto, int quantidade) {// Retorna o lote do produto mais próximo a data de validade
+		List<Lote> lotesOrdenadedByExpirationDate = this.getLotesByProduct(produto);
 		lotesOrdenadedByExpirationDate.sort(Comparator.comparing(Lote::getDataDeValidade));
+		Collections.reverse(lotesOrdenadedByExpirationDate);
 
 		for (Lote lote : lotesOrdenadedByExpirationDate) {
-			if (lote.getQuantidade() > 0)
+			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade)
 				return lote;
-		}
-		return null;
-	}
-
-	public Lote getLoteByQuantidade(int quantidade) {
-		List<Lote> lotesOrdenadedByQuantity = new ArrayList<Lote>();
-		lotesOrdenadedByQuantity = this.listarLotes();
-		lotesOrdenadedByQuantity.sort(Comparator.comparing(Lote::getQuantidade));
-
-		for (Lote lote : lotesOrdenadedByQuantity) {
-			if (lote.getQuantidade() >= quantidade) {
-				return lote;
-			}
 		}
 		return null;
 	}
@@ -118,14 +105,5 @@ public class LoteService {
 			return false;
 		}
 		return true;
-	}
-
-	public Lote getLotePorProduto(Produto produto) {
-		List<Lote> lotes = this.listarLotes();
-		for (Lote lote : lotes) {
-			if (lote.getProduto().equals(produto))
-				return lote;
-		}
-		return null;
 	}
 }

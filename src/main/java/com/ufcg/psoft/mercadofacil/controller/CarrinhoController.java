@@ -40,7 +40,7 @@ public class CarrinhoController {
 	
 	@Autowired
 	ProdutoService produtoService;
-	@RequestMapping(value = "carrinho/{idUsuario}/add/", method = RequestMethod.POST)
+	@RequestMapping(value = "carrinho/{idUsuario}/addItem/", method = RequestMethod.POST)
 	public ResponseEntity<?> adicionaProdutoNoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemDTO, UriComponentsBuilder ucBuilder)
 			throws ProductNotFoundException, UsuarioNotFoundException {
 
@@ -52,12 +52,12 @@ public class CarrinhoController {
 
 		carrinhoService.adicionaItensNoCarrinho(user, itemDTO);
 
-		return new ResponseEntity<String>("Produto adicionado no carrinho!", HttpStatus.OK);
+		return new ResponseEntity<String>("Item adicionado no carrinho!" + user.getCarrinho(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "carrinho/{idUsuario}/remove/", method = RequestMethod.DELETE)
-	public ResponseEntity<?> removeProdutoDoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO, UriComponentsBuilder ucBuilder)
-			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException {
+	@RequestMapping(value = "carrinho/{idUsuario}/removeItem/", method = RequestMethod.DELETE)
+	public ResponseEntity<?> removeProdutoDoCarrinho(@PathVariable ("idUsuario") String idUsuario, @RequestBody ItemCompraDTO itemCompraDTO)
+			throws ProductNotFoundException, UsuarioNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
 		Usuario user = usuarioService.getUserById(idUsuario);
 		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
 
@@ -66,7 +66,16 @@ public class CarrinhoController {
 
 		carrinhoService.removeItensDoCarrinho(user, itemCompraDTO);
 
-		return new ResponseEntity<String>("Produto removido do carrinho!\n" + user.getCarrinho().getItensDoCarrinho(), HttpStatus.OK);
+		return new ResponseEntity<String>("Item removido do carrinho!\n", HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "carrinho/{idUsuario}/descarta", method = RequestMethod.DELETE)
+	public ResponseEntity<?> descartaCarrinho(@PathVariable ("idUsuario") String idUsuario) throws UsuarioNotFoundException, LoteNotFoundException {
+		Usuario user = usuarioService.getUserById(idUsuario);
+		if (user == null) throw new UsuarioNotFoundException("Usuario não encontrado");
+
+		carrinhoService.descartaCarrinho(user);
+		return new ResponseEntity<String>("Carrinho descartado!", HttpStatus.OK);
 	}
 
 	

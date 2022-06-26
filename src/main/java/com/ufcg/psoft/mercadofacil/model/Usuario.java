@@ -1,7 +1,5 @@
 package com.ufcg.psoft.mercadofacil.model;
 
-import java.util.Map;
-
 public class Usuario {
 	
 	private String cpf; 

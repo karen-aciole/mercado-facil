@@ -11,22 +11,21 @@ public class Carrinho {
 	private List<ItemCompra> itensDoCarrinho;
 
 	public Carrinho() {
-		this.itensDoCarrinho = new ArrayList<ItemCompra>();
+		this.itensDoCarrinho = new ArrayList<>();
 	}
 	public String getId() {
 		return id;
 	}
 
+	public Usuario getUsuario()	{
+		return usuario;
+	}
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 
 	public List<ItemCompra> getItensDoCarrinho() {
 		return itensDoCarrinho;
-	}
-
-	public void setItensDoCarrinho(List<ItemCompra> itensDoCarrinho) {
-		this.itensDoCarrinho = itensDoCarrinho;
 	}
 
 	public void addItemNoCarrinho(ItemCompra item) {
@@ -48,11 +47,11 @@ public class Carrinho {
 
 	@Override
 	public String toString() {
-		String itens = "";
+		StringBuilder itens = new StringBuilder();
 		for (ItemCompra item : itensDoCarrinho) {
-			itens = item + "\n";
+			itens.append(item).append("\n");
 		}
-		return itens;
+		return itens.toString();
 
 	}
 

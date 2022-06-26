@@ -70,15 +70,6 @@ public class LoteService {
 		return(lote);
 	}
 
-	private List<Lote> getLotesByProduct(Produto produto) { // Lista todos os lotes de um produto
-		List<Lote> lotesResult = listaLotes();
-		for (Lote lote : this.listaLotes()) {
-			if (lote.getProduto().equals(produto))
-				lotesResult.add(lote);
-		}
-		return lotesResult;
-	}
-
 	public Lote getLoteClosestToExpirationDate(Produto produto, int quantidade) {// Retorna o lote do produto mais próximo a data de validade
 
 		List<Lote> lotesDoProduto = listaLotes();

@@ -6,23 +6,27 @@ import java.util.List;
 import java.util.UUID;
 
 public class Compra {
-    private String idDaCompra;
+    private String id;
     private LocalDate dataDaCompra;
     private Usuario usuario;
     private BigDecimal valorDaCompra;
 
     private List<ItemCompra> itensDaCompra;
 
-    public Compra(List<ItemCompra> itensDaCompra, BigDecimal valorDaCompra) {
+    public Compra(Usuario usuario, List<ItemCompra> itensDaCompra, BigDecimal valorDaCompra) {
         this.usuario = usuario;
         this.itensDaCompra = itensDaCompra;
         this.valorDaCompra = valorDaCompra;
         this.dataDaCompra = LocalDate.now();
-        this.idDaCompra = UUID.randomUUID().toString();
+        this.id = UUID.randomUUID().toString();
     }
 
-    public String getIdDaCompra() {
-        return idDaCompra;
+    public String getId() {
+        return id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
     }
 
     public LocalDate getDataDaCompra() {
@@ -33,22 +37,22 @@ public class Compra {
         return valorDaCompra;
     }
 
-    public List<ItemCompra> itensDaCompra() {
+    public List<ItemCompra> getItensDaCompra() {
         return itensDaCompra;
     }
 
     public String listaItensDaCompraFormatada() {
         StringBuilder sb = new StringBuilder();
-        for (ItemCompra item : itensDaCompra) {
+        for (ItemCompra item : getItensDaCompra()) {
             sb.append(item.toString()).append("\n");
         }
         return sb.toString();
     }
     @Override
     public String toString() {
-        return "ID da Compra: " + getIdDaCompra() +
+        return "ID da Compra: " + getId() +
                 "\n Data da compra: " + getDataDaCompra() +
-                "\n Itens da compra: \n" +  listaItensDaCompraFormatada() +
+                "\n Itens da compra: " +  listaItensDaCompraFormatada() +
                 "\n Valor total da compra: " + getValorDaCompra();
     }
 }

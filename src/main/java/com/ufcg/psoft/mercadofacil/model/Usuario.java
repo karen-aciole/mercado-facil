@@ -1,12 +1,17 @@
 package com.ufcg.psoft.mercadofacil.model;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuario {
 	private String cpf; 
 	private String nome; 
 	private String endereco; 
 	private String telefone;
 	private Carrinho carrinho;
+
+	private List<Compra> compras;
 	
 	public Usuario(String cpf, String nome, String telefone, String endereco) {
 		this.cpf = cpf;
@@ -14,6 +19,7 @@ public class Usuario {
 		this.telefone = telefone;
 		this.endereco = endereco;
 		this.carrinho = new Carrinho();
+		this.compras = new ArrayList<>();
 	}
 
 	public String getCpf() {
@@ -43,6 +49,13 @@ public class Usuario {
 
 	public void setCarrinho(Carrinho carrinho) {
 		this.carrinho = carrinho;
+	}
+
+	public void addCompra(Compra compra) {
+		this.compras.add(compra);
+	}
+	public List<Compra> getCompras() {
+		return compras;
 	}
 	
 	@Override

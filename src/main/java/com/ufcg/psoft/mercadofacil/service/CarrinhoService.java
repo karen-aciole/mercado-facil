@@ -5,6 +5,7 @@ import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
+import com.ufcg.psoft.mercadofacil.repository.CompraRepository;
 import com.ufcg.psoft.mercadofacil.repository.ItemCompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,8 @@ public class CarrinhoService {
 	private CarrinhoRepository carrinhoRepo;
 	@Autowired
 	private ItemCompraRepository itensDoCarrinhoRepo;
+	@Autowired
+	private CompraRepository compraRepo;
 
 	@Autowired
 	private ProdutoRepository produtoRepo;
@@ -54,15 +57,8 @@ public class CarrinhoService {
 
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade()); // cria o item de compra
 		carrinho.addItemNoCarrinho(item);
-		item.setIdLote(lote.getId()); // seta o lote do item
+		item.setIdLote(lote.getId()); // armazena o lote do item em caso de desistência da compra ou remoção do item do carrinho
 		lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
-
-		//lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());// atualiza a quantidade do lote
-
-		//ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade()); // cria o item de compra
-		//item.setIdLote(lote.getId()); // seta o lote do item
-
-		//carrinho.addItemNoCarrinho(item); // adiciona o item no carrinho
 
 	}
 
@@ -112,7 +108,9 @@ public class CarrinhoService {
 
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
 		BigDecimal valorDaCompra = calculaValorTotalDoCarrinho(carrinho);
-		Compra compra = new Compra(itensDaCompra, valorDaCompra);
+		Compra compra = new Compra(usuario, itensDaCompra, valorDaCompra);
+		compraRepo.addCompra(compra);
+		usuario.addCompra(compra);
 
 		carrinho.limpaCarrinho();
 		carrinhoRepo.removeCarrinho(carrinho.getId());

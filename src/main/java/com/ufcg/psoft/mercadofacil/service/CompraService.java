@@ -2,13 +2,14 @@ package com.ufcg.psoft.mercadofacil.service;
 
 import com.ufcg.psoft.mercadofacil.exception.CompraNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Compra;
-import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.model.pagamento.Boleto;
+import com.ufcg.psoft.mercadofacil.model.pagamento.FormasDePagamento;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.CompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -43,4 +44,5 @@ public class CompraService {
 
         return compra;
     }
+
 }

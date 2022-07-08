@@ -1,7 +1,5 @@
 package com.ufcg.psoft.mercadofacil.controller;
 
-import java.util.List;
-
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
 import com.ufcg.psoft.mercadofacil.exception.*;
 import com.ufcg.psoft.mercadofacil.model.Carrinho;
@@ -18,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 import com.ufcg.psoft.mercadofacil.service.CarrinhoService;
 import com.ufcg.psoft.mercadofacil.service.ProdutoService;
 import com.ufcg.psoft.mercadofacil.service.UsuarioService;

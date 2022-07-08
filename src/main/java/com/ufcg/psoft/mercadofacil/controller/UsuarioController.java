@@ -17,7 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.ufcg.psoft.mercadofacil.dto.UsuarioDTO;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioAlreadyExists;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
-import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 import com.ufcg.psoft.mercadofacil.service.UsuarioService;
 
 @RestController

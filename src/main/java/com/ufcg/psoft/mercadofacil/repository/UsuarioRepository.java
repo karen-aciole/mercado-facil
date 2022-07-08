@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 
 @Repository
 public class UsuarioRepository {

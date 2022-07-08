@@ -5,6 +5,7 @@ import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.CompraRepository;
 import com.ufcg.psoft.mercadofacil.repository.ItemCompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,7 @@ public class CarrinhoService {
 		carrinhoRepo.removeCarrinho(carrinho.getId());
 	}
 
-	public Compra finalizaCarrinho(Usuario usuario) throws CarrinhoVazioException {
+	public Compra finalizaCarrinho(Usuario usuario, String formaDePagamento) throws CarrinhoVazioException {
 		Carrinho carrinho = usuario.getCarrinho();
 		if (carrinho.getItensDoCarrinho().isEmpty())
 			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
@@ -108,7 +109,7 @@ public class CarrinhoService {
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
 		BigDecimal valorDaCompra = calculaValorTotalDoCarrinho(carrinho);
 
-		Compra compra = new Compra(usuario, itensDaCompra, valorDaCompra);
+		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorDaCompra);
 		compraRepo.addCompra(compra);
 		usuario.addCompra(compra);
 

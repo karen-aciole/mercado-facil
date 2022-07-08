@@ -1,5 +1,8 @@
 package com.ufcg.psoft.mercadofacil.model;
 
+import com.ufcg.psoft.mercadofacil.model.pagamento.Boleto;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -10,12 +13,13 @@ public class Compra {
     private LocalDate dataDaCompra;
     private Usuario usuario;
     private BigDecimal valorDaCompra;
-
+    private String formaDePagamento;
     private List<ItemCompra> itensDaCompra;
 
-    public Compra(Usuario usuario, List<ItemCompra> itensDaCompra, BigDecimal valorDaCompra) {
+    public Compra(Usuario usuario, List<ItemCompra> itensDaCompra, String formaDePagamento, BigDecimal valorDaCompra) {
         this.usuario = usuario;
         this.itensDaCompra = itensDaCompra;
+        this.formaDePagamento = formaDePagamento;
         this.valorDaCompra = valorDaCompra;
         this.dataDaCompra = LocalDate.now();
         this.id = UUID.randomUUID().toString();
@@ -29,15 +33,6 @@ public class Compra {
         return usuario;
     }
 
-   // public void setUsuario(Usuario usuario) {
-      //  this.usuario = usuario;
-   // }
-
-    public void setValorDaCompra(BigDecimal valorDaCompra) {
-        this.valorDaCompra = valorDaCompra;
-    }
-
-
     public LocalDate getDataDaCompra() {
         return dataDaCompra;
     }
@@ -49,6 +44,30 @@ public class Compra {
     public List<ItemCompra> getItensDaCompra() {
         return itensDaCompra;
     }
+
+    public String getFormaDePagamento() {
+        return formaDePagamento;
+    }
+
+    public void setFormaDePagamento(String formaDePagamento) {
+        switch (formaDePagamento) {
+            case "BOLETO":
+                this.formaDePagamento = "BOLETO";
+                break;
+
+            case "CARTAO DE CREDITO":
+                this.formaDePagamento = "CARTAO DE CREDITO";
+                break;
+
+            case "PAYPAL":
+                this.formaDePagamento = "PAYPAL";
+                break;
+
+            default:
+                throw new IllegalArgumentException("Forma de pagamento inválida");
+        }
+    }
+
 
     public String listaItensDaCompraFormatada() {
         StringBuilder sb = new StringBuilder();

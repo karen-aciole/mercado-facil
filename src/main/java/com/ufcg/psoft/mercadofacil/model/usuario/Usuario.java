@@ -1,5 +1,8 @@
-package com.ufcg.psoft.mercadofacil.model;
+package com.ufcg.psoft.mercadofacil.model.usuario;
 
+
+import com.ufcg.psoft.mercadofacil.model.Carrinho;
+import com.ufcg.psoft.mercadofacil.model.Compra;
 
 import java.util.ArrayList;
 import java.util.List;

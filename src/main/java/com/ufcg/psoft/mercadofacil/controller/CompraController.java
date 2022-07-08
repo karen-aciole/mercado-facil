@@ -4,7 +4,7 @@ import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.CompraNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Compra;
-import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.CarrinhoRepository;
 import com.ufcg.psoft.mercadofacil.service.CarrinhoService;
 import com.ufcg.psoft.mercadofacil.service.CompraService;
@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/api")
@@ -34,7 +33,7 @@ public class CompraController {
     CarrinhoRepository carrinhoRepo;
 
     @RequestMapping(value = "/compra/{idUsuario}/finalizar", method = RequestMethod.POST)
-    public ResponseEntity<?> finalizarCompra(@PathVariable ("idUsuario") String idUsuario) throws CarrinhoVazioException {
+    public ResponseEntity<?> finalizarCompra(@PathVariable ("idUsuario") String idUsuario, @RequestParam ("formaDePagamento") String formaDePagamento) throws CarrinhoVazioException {
         Usuario user;
         Compra compra;
 
@@ -44,7 +43,7 @@ public class CompraController {
             return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
         }
         try {
-            compra = carrinhoService.finalizaCarrinho(user);
+            compra = carrinhoService.finalizaCarrinho(user, formaDePagamento);
         } catch (CarrinhoVazioException e) {
             return new ResponseEntity<String>("Carrinho vazio", HttpStatus.BAD_REQUEST);
         }
@@ -84,6 +83,16 @@ public class CompraController {
         List<Compra> compras = compraService.listaComprasDoUsuario(user);
 
         return new ResponseEntity<String>("Histórico de compras do usuário: "+ idUsuario + "\n\n" + compras, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/compra/formasDePagamento/", method = RequestMethod.GET)
+    public ResponseEntity<?> listaFormasDePagamentos() {
+        String listaFormasDePagamento = "Formas de pagamento:\n" +
+                "BOLETO\n" +
+                "PAYPAL (acréscimo de 2% no valor da compra)\n" +
+                "CARTAO DE CREDITO (acréscimo de 5% no valor da compra)\n";
+
+        return new ResponseEntity<String>(listaFormasDePagamento, HttpStatus.OK);
     }
 
 }

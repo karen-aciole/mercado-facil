@@ -1,9 +1,11 @@
 package com.ufcg.psoft.mercadofacil.controller;
 
+import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.CompraNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Compra;
 import com.ufcg.psoft.mercadofacil.model.Usuario;
+import com.ufcg.psoft.mercadofacil.repository.CarrinhoRepository;
 import com.ufcg.psoft.mercadofacil.service.CarrinhoService;
 import com.ufcg.psoft.mercadofacil.service.CompraService;
 import com.ufcg.psoft.mercadofacil.service.UsuarioService;
@@ -12,8 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/api")
@@ -28,29 +30,60 @@ public class CompraController {
 
     @Autowired
     CompraService compraService;
+    @Autowired
+    CarrinhoRepository carrinhoRepo;
 
-    @RequestMapping(value = "/compras/{idUsuario}/{idCompra}", method = RequestMethod.GET)
-    public ResponseEntity<?> consultarCompra(@PathVariable("idUsuario") String idUsuario, @PathVariable("idCompra") String idCompra)
-            throws UsuarioNotFoundException {
+    @RequestMapping(value = "/compra/{idUsuario}/finalizar", method = RequestMethod.POST)
+    public ResponseEntity<?> finalizarCompra(@PathVariable ("idUsuario") String idUsuario) throws CarrinhoVazioException {
+        Usuario user;
+        Compra compra;
 
-        Usuario user = usuarioService.getUserById(idUsuario);
-        if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+        try {
+            user = usuarioService.getUserById(idUsuario);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
+        }
+        try {
+            compra = carrinhoService.finalizaCarrinho(user);
+        } catch (CarrinhoVazioException e) {
+            return new ResponseEntity<String>("Carrinho vazio", HttpStatus.BAD_REQUEST);
+        }
 
-        Compra compra = compraService.getCompraById(user, idCompra);
-        if (compra == null) return new ResponseEntity<String>("Compra com ID: " + idCompra + " não existe", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<String>("Compra finalizada com sucesso!\n" + compra, HttpStatus.OK);
+    }
+    @RequestMapping(value = "/compra/{idUsuario}/", method = RequestMethod.GET)
+    public ResponseEntity<?> consultarCompra(@PathVariable("idUsuario") String idUsuario, @RequestParam(value = "idCompra") String idCompra) {
+        Usuario user;
+        Compra compra;
 
-        return new ResponseEntity<Compra>(compra, HttpStatus.OK);
+        try {
+            user = usuarioService.getUserById(idUsuario);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            compra = compraService.getCompraDoUsuarioById(user, idCompra);
+        } catch (CompraNotFoundException e) {
+            return new ResponseEntity<String>("Compra com ID: " + idCompra + " não existe", HttpStatus.BAD_REQUEST);
+        }
+
+       return new ResponseEntity<String>(" " + compra, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/compras/{idUsuario}/", method = RequestMethod.GET)
-    public ResponseEntity<?> historicoDeCompras(@PathVariable("idUsuario") String idUsuario) throws UsuarioNotFoundException {
-        Usuario user = usuarioService.getUserById(idUsuario);
-        if (user == null) return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> historicoDeCompras(@PathVariable("idUsuario") String idUsuario) {
 
-        List <Compra> compras = compraService.listaComprasDoUsuario(user);
-        if (compras.isEmpty()) return new ResponseEntity<String>("Nenhuma compra encontrada", HttpStatus.NO_CONTENT);
+        Usuario user;
+        try {
+            user = usuarioService.getUserById(idUsuario);
+        } catch (UsuarioNotFoundException e) {
+            return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
+        }
 
-        return new ResponseEntity<List<Compra>>(compras, HttpStatus.OK);
+        List<Compra> compras = compraService.listaComprasDoUsuario(user);
+
+        return new ResponseEntity<String>("Histórico de compras do usuário: "+ idUsuario + "\n\n" + compras, HttpStatus.OK);
     }
 
 }

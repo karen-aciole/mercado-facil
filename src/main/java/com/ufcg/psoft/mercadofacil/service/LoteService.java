@@ -64,22 +64,25 @@ public class LoteService {
 		@SuppressWarnings("unused")
 		boolean hasProduct = checkIfProductExists(id);
 		if (!hasProduct) throw new LoteNotFoundException("Lote: " + id + "não encontrado");
-		Lote lote = this.loteRep.getLote(id);
-		if (lote == null) throw new LoteNotFoundException("Lote: " + id + "não encontrado");
 		
-		return(lote);
+		return (this.loteRep.getLote(id));
 	}
 
-	public Lote getLoteClosestToExpirationDate(Produto produto, int quantidade) {// Retorna o lote do produto mais próximo a data de validade
+	private List<Lote> getLotesByExpirationDate() {// Retorna o lote do produto mais próximo a data de validade
 
-		List<Lote> lotesDoProduto = listaLotes();
+		List<Lote> lotesOrdenadosPorDataDeValidade = listaLotes();
 
-		lotesDoProduto.sort(Comparator.comparing(Lote::getDataDeValidade)); // Ordena por data de validade
+		lotesOrdenadosPorDataDeValidade.sort(Comparator.comparing(Lote::getDataDeValidade)); // Ordena por data de validade
 
-		for (Lote lote : lotesDoProduto) {
-			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade && lote.getProduto().equals(produto))
+		return lotesOrdenadosPorDataDeValidade;
+	}
+
+	public Lote	getLoteByProduct(Produto prod, int quantidade) {
+		List<Lote> LotesOrdenados = getLotesByExpirationDate();
+
+		for (Lote lote : LotesOrdenados)
+			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade && lote.getProduto().equals(prod))
 				return lote;
-		}
 		return null;
 	}
 

@@ -70,7 +70,7 @@ public class ProdutoService {
 	
 	public Produto getProdutoById(String id) throws ProductNotFoundException {
 		Produto prod = this.prodRep.getProd(id);
-		if(prod == null) throw new ProductNotFoundException("Produto: " + id + " não encontrado");
+		if(prod == null) throw new ProductNotFoundException("Produto com ID " + id + " não encontrado");
 		
 		return(prod);
 	}

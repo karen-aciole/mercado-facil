@@ -29,6 +29,15 @@ public class Compra {
         return usuario;
     }
 
+   // public void setUsuario(Usuario usuario) {
+      //  this.usuario = usuario;
+   // }
+
+    public void setValorDaCompra(BigDecimal valorDaCompra) {
+        this.valorDaCompra = valorDaCompra;
+    }
+
+
     public LocalDate getDataDaCompra() {
         return dataDaCompra;
     }
@@ -50,9 +59,9 @@ public class Compra {
     }
     @Override
     public String toString() {
-        return "ID da Compra: " + getId() +
-                "\n Data da compra: " + getDataDaCompra() +
-                "\n Itens da compra: " +  listaItensDaCompraFormatada() +
-                "\n Valor total da compra: " + getValorDaCompra();
+        return "\nID da Compra: " + getId() +
+                "\nData da compra: " + getDataDaCompra() +
+                "\nItens da compra:\n " +  listaItensDaCompraFormatada() +
+                "\nValor total da compra: R$" + getValorDaCompra() + "\n\n";
     }
 }

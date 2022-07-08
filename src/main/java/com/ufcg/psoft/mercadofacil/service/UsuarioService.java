@@ -47,13 +47,15 @@ public class UsuarioService {
 		return user;
 	}
 	
-	public void editUser(String enderecoUpdate, String telefoneUpdate, Usuario usuario) throws UsuarioNotFoundException { 
-		usuario.setEndereco(!enderecoUpdate.isBlank() ? enderecoUpdate : usuario.getEndereco());
-		usuario.setTelefone(!telefoneUpdate.isBlank() ? telefoneUpdate : usuario.getTelefone());
+	public void editUser(UsuarioDTO usuarioDTO, Usuario usuario) throws UsuarioNotFoundException {
+		usuario.setEndereco(usuarioDTO.getEndereco() != null ? usuarioDTO.getEndereco() : usuario.getEndereco());
+		usuario.setTelefone(usuarioDTO.getTelefone() != null ? usuarioDTO.getTelefone() : usuario.getTelefone());
 		this.userRepo.editUser(usuario.getCpf(), usuario);
 	}
 	
 	public void deletUser(String cpf) throws UsuarioNotFoundException {
+		Usuario user = this.userRepo.getUser(cpf);
+		if (user == null) throw new UsuarioNotFoundException("Usuário: " + cpf + " não encontrado");
 		this.userRepo.delUser(cpf);
 	}
 	

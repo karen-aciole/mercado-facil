@@ -41,34 +41,33 @@ public class CarrinhoService {
 		usuario.setCarrinho(carrinho);
 		this.carrinhoRepo.adicionaCarrinho(carrinho);
 	}
-	public void adicionaItensNoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws QuantidadeInvalidaException, ProductNotFoundException {
+	public void adicionaItensNoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws QuantidadeInvalidaException, ProductNotFoundException, LoteNotFoundException {
 		Carrinho carrinho = usuario.getCarrinho();
-		if (usuario.getCarrinho() == null) {
+		if (usuario.getCarrinho() == null)
 			criaCarrinho(usuario);
-		}
+
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto()); // busca o produto pelo id
-		if (produto == null) {
-			throw new ProductNotFoundException("Produto não encontrado");
-		}
-		if (itemCompraDTO.getQuantidade() <= 0) {
-			throw new QuantidadeInvalidaException("Quantidade inválida");
-		}
-		Lote lote = loteService.getLoteClosestToExpirationDate(produto, itemCompraDTO.getQuantidade());// busca o lote mais proximo de vencimento do produto
+
+
+		if (itemCompraDTO.getQuantidade() <= 0) throw new QuantidadeInvalidaException("Quantidade inválida");
+
+		Lote lote = loteService.getLoteByProduct(produto, itemCompraDTO.getQuantidade());// busca o lote mais proximo de vencimento do produto
+		if (lote == null) throw new LoteNotFoundException("Produto sem estoque/lote.");
 
 		ItemCompra item = new ItemCompra(produto, itemCompraDTO.getQuantidade()); // cria o item de compra
 		carrinho.addItemNoCarrinho(item);
 		item.setIdLote(lote.getId()); // armazena o lote do item em caso de desistência da compra ou remoção do item do carrinho
 		lote.setQuantidade(lote.getQuantidade() - itemCompraDTO.getQuantidade());
-
 	}
 
-	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws ProductNotFoundException, QuantidadeInvalidaException, LoteNotFoundException {
+	public void removeItensDoCarrinho(Usuario usuario, ItemCompraDTO itemCompraDTO) throws QuantidadeInvalidaException, LoteNotFoundException, CarrinhoVazioException {
 		Carrinho carrinho = usuario.getCarrinho();
 		Produto produto = produtoRepo.getProd(itemCompraDTO.getIdProduto());
 
-		if (itemCompraDTO.getQuantidade() < 0) throw new QuantidadeInvalidaException("Quantidade inválida");
+		if (carrinho.getItensDoCarrinho().isEmpty())
+			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
 
-		if (carrinho.getItemNoCarrinho(produto) == null) throw new ProductNotFoundException("Produto não encontrado no carrinho");
+		if (itemCompraDTO.getQuantidade() < 0) throw new QuantidadeInvalidaException("Quantidade inválida");
 
 		ItemCompra itemDoCarrinho = carrinho.getItemNoCarrinho(produto);
 
@@ -108,6 +107,7 @@ public class CarrinhoService {
 
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
 		BigDecimal valorDaCompra = calculaValorTotalDoCarrinho(carrinho);
+
 		Compra compra = new Compra(usuario, itensDaCompra, valorDaCompra);
 		compraRepo.addCompra(compra);
 		usuario.addCompra(compra);

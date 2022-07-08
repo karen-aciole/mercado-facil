@@ -48,7 +48,7 @@ public class UsuarioController {
 		try {
 			usuario = usuarioService.getUserById(cpf);
 		} catch (UsuarioNotFoundException e) { 
-			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
 		
 		return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
@@ -63,12 +63,13 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/usuario/{cpf}", method = RequestMethod.PUT)
 	public ResponseEntity<?> editarUsuario(@PathVariable("cpf") String cpf, @RequestParam (required = false) String enderecoDTO, @RequestParam (required = false) String telefoneDTO, UriComponentsBuilder ucBuilder) {
-		Usuario usuario; 
+		Usuario usuario;
 		try {
 			usuario = usuarioService.getUserById(cpf);
-			usuarioService.editUser(enderecoDTO, telefoneDTO, usuario);
+			UsuarioDTO usuarioDTO = new UsuarioDTO(cpf, usuario.getNome(), telefoneDTO, enderecoDTO);
+			usuarioService.editUser(usuarioDTO, usuario);
 		} catch (UsuarioNotFoundException e) {
-			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<String>("Usuário atualizado\n" + usuario, HttpStatus.OK);
 	}
@@ -78,7 +79,7 @@ public class UsuarioController {
 		try {
 			this.usuarioService.deletUser(cpf);
 		} catch (UsuarioNotFoundException e) { 
-			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NO_CONTENT);
+			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<String>("Usuário deletado", HttpStatus.OK);
 	}

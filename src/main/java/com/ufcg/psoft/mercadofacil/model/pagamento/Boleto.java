@@ -7,17 +7,14 @@ public class Boleto extends FormasDePagamento {
     public Boleto() {}
 
     @Override
-    public void calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
-        BigDecimal acrescimo = new BigDecimal(1);
-        BigDecimal valorTotal = valorDaCompra.multiply(acrescimo);
-        this.acrescimo.add(valorTotal);
+    public BigDecimal calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
+        return valorDaCompra.multiply(BigDecimal.valueOf(0));
     }
 
     @Override
-    public BigDecimal getValorTotal() {
-        return this.acrescimo;
+    public BigDecimal getAcrescimo() {
+        return acrescimo;
     }
-
 
     public String getFormaDePagamento() {
         return "BOLETO";

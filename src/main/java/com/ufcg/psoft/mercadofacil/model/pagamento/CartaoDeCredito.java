@@ -7,14 +7,13 @@ public class CartaoDeCredito extends FormasDePagamento {
     public CartaoDeCredito() {}
 
     @Override
-    public void calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
-        BigDecimal acrescimo = new BigDecimal(0.05);
-        BigDecimal valorTotal = valorDaCompra.multiply(acrescimo);
-        this.acrescimo.add(valorTotal);
+    public BigDecimal calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
+        return valorDaCompra.multiply(BigDecimal.valueOf(0.05));
     }
 
-    public BigDecimal getValorTotal() {
-        return this.acrescimo;
+    @Override
+    public BigDecimal getAcrescimo() {
+        return acrescimo;
     }
 
     public String getFormaDePagamento() {

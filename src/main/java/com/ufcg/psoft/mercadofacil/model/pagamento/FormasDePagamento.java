@@ -11,10 +11,9 @@ public abstract class FormasDePagamento {
         this.acrescimo = new BigDecimal(0);
     }
 
-    public abstract void calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra);
+    public abstract BigDecimal calculaValorDaCompraComAcrescimo(BigDecimal valorDaCompra);
 
-    public abstract BigDecimal getValorTotal();
-
+    public abstract BigDecimal getAcrescimo();
 
     public abstract String getFormaDePagamento();
 

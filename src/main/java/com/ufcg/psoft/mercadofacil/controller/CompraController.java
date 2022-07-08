@@ -36,20 +36,28 @@ public class CompraController {
     public ResponseEntity<?> finalizarCompra(@PathVariable ("idUsuario") String idUsuario, @RequestParam ("formaDePagamento") String formaDePagamento) throws CarrinhoVazioException {
         Usuario user;
         Compra compra;
+        String pagamento = formaDePagamento.toUpperCase().replaceAll(" ", "");
 
         try {
             user = usuarioService.getUserById(idUsuario);
         } catch (UsuarioNotFoundException e) {
             return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
         }
+
+
+        if (!validaFormaDePagamento(pagamento))
+            return new ResponseEntity<String>("Forma de pagamento inválida", HttpStatus.BAD_REQUEST);
+
+
         try {
-            compra = carrinhoService.finalizaCarrinho(user, formaDePagamento);
+            compra = carrinhoService.finalizaCarrinho(user, pagamento);
         } catch (CarrinhoVazioException e) {
             return new ResponseEntity<String>("Carrinho vazio", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<String>("Compra finalizada com sucesso!\n" + compra, HttpStatus.OK);
     }
+
     @RequestMapping(value = "/compra/{idUsuario}/", method = RequestMethod.GET)
     public ResponseEntity<?> consultarCompra(@PathVariable("idUsuario") String idUsuario, @RequestParam(value = "idCompra") String idCompra) {
         Usuario user;
@@ -93,6 +101,12 @@ public class CompraController {
                 "CARTAO DE CREDITO (acréscimo de 5% no valor da compra)\n";
 
         return new ResponseEntity<String>(listaFormasDePagamento, HttpStatus.OK);
+    }
+
+    private Boolean validaFormaDePagamento(String formaDePagamento) {
+        return formaDePagamento.equals("BOLETO") ||
+                formaDePagamento.equals("PAYPAL") ||
+                formaDePagamento.equals("CARTAODECREDITO");
     }
 
 }

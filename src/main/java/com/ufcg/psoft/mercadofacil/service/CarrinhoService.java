@@ -107,9 +107,9 @@ public class CarrinhoService {
 			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
 
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
-		BigDecimal valorDaCompra = calculaValorTotalDoCarrinho(carrinho);
-
+		BigDecimal valorDaCompra = calculaValorDosItensDoCarrinho(carrinho);
 		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorDaCompra);
+
 		compraRepo.addCompra(compra);
 		usuario.addCompra(compra);
 
@@ -119,11 +119,12 @@ public class CarrinhoService {
 		return compra;
 	}
 
-	private BigDecimal calculaValorTotalDoCarrinho(Carrinho carrinho) {
+	private BigDecimal calculaValorDosItensDoCarrinho(Carrinho carrinho) {
 		BigDecimal valorTotal = new BigDecimal(0);
 		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
 			valorTotal = valorTotal.add(item.getProduto().getPreco().multiply(new BigDecimal(item.getQuantidade())));
 		}
+
 		return valorTotal;
 	}
 }

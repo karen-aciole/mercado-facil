@@ -1,12 +1,16 @@
 package com.ufcg.psoft.mercadofacil.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import com.ufcg.psoft.mercadofacil.exception.InvalidDateException;
+import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.Gson;
 import com.ufcg.psoft.mercadofacil.dto.LoteDTO;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
@@ -24,28 +28,29 @@ public class LoteService {
 	@Autowired
 	private ProdutoRepository produtoRep;
 	
-	private Gson gson = new Gson();
 	
 	private List<Lote> listarLotes() {
-		return new ArrayList<Lote>(loteRep.getAll());
+		return new ArrayList<>(loteRep.getAll());
 	}
 	
 	public List<Lote> listaLotes() {
-		List<Lote> lotesResult = new ArrayList<Lote>();
+		List<Lote> lotesResult = new ArrayList<>();
 		for (Lote lote : this.listarLotes()) {
-			if (checkIfProductExists(lote.getId()) == true)
+			if (checkIfProductExists(lote.getId()))
 				lotesResult.add(lote);
 		}
 		return(lotesResult);
 	}
 	
-	public String addLote(String jsonData) throws ProductNotFoundException {
-		
-		LoteDTO loteDTO = gson.fromJson(jsonData, LoteDTO.class);
+	public String addLote(LoteDTO loteDTO) throws ProductNotFoundException, InvalidDateException {
+
 		Produto prod = this.produtoRep.getProd(loteDTO.getIdProduto());
 		
 		if(prod == null) throw new ProductNotFoundException("Produto: " + loteDTO.getIdProduto() + " não encontrado");
-		Lote lote = new Lote(prod, loteDTO.getQuantidade());
+
+		if (loteDTO.getDataDeValidade().isBefore(LocalDate.now())) throw new InvalidDateException("Data inválida");
+
+		Lote lote = new Lote(prod, loteDTO.getQuantidade(), loteDTO.getDataDeValidade());
 		this.loteRep.addLote(lote);
 		
 		return lote.getId();
@@ -56,15 +61,34 @@ public class LoteService {
 	}
 	
 	public Lote getLoteById(String id) throws LoteNotFoundException {
+		@SuppressWarnings("unused")
 		boolean hasProduct = checkIfProductExists(id);
-		Lote lote = this.loteRep.getLote(id);
-		if (lote == null || hasProduct == false) throw new LoteNotFoundException("Lote: " + id + "não encontrado");
+		if (!hasProduct) throw new LoteNotFoundException("Lote: " + id + "não encontrado");
 		
-		return(lote);
+		return (this.loteRep.getLote(id));
 	}
-	
+
+	private List<Lote> getLotesByExpirationDate() {// Retorna o lote do produto mais próximo a data de validade
+
+		List<Lote> lotesOrdenadosPorDataDeValidade = listaLotes();
+
+		lotesOrdenadosPorDataDeValidade.sort(Comparator.comparing(Lote::getDataDeValidade)); // Ordena por data de validade
+
+		return lotesOrdenadosPorDataDeValidade;
+	}
+
+	public Lote	getLoteByProduct(Produto prod, int quantidade) {
+		List<Lote> LotesOrdenados = getLotesByExpirationDate();
+
+		for (Lote lote : LotesOrdenados)
+			if (lote.getQuantidade() > 0 && lote.getQuantidade() >= quantidade && lote.getProduto().equals(prod))
+				return lote;
+		return null;
+	}
+
 	public void editLote(LoteDTO loteDTO, Lote lote) throws LoteNotFoundException {
-		lote.setQuantidade(loteDTO.getQuantidade());
+		lote.setQuantidade(loteDTO.getQuantidade() >= 0 ? loteDTO.getQuantidade() : lote.getQuantidade());
+	
 		this.loteRep.editLote(lote.getId(), lote);
 	}
 	

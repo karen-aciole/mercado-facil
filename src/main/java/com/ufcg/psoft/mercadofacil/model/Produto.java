@@ -1,4 +1,5 @@
 package com.ufcg.psoft.mercadofacil.model;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class Produto {
@@ -9,9 +10,9 @@ public class Produto {
 	
 	private String fabricante;
 	
-	private double preco;
+	private BigDecimal preco;
 
-	public Produto(String nome, String fabricante, double preco) {
+	public Produto(String nome, String fabricante, BigDecimal preco) {
 		this.id = UUID.randomUUID().toString();
 		this.nome = nome;
 		this.fabricante = fabricante;
@@ -38,11 +39,11 @@ public class Produto {
 		this.fabricante = fabricante;
 	}
 	
-	public double getPreco() {
+	public BigDecimal getPreco() {
 		return preco;
 	}
 	
-	public void setPreco(double preco) { 
+	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
 	}
 	

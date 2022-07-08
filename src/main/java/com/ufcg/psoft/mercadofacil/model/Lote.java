@@ -1,4 +1,6 @@
 package com.ufcg.psoft.mercadofacil.model;
+
+import java.time.LocalDate;
 import java.util.UUID;
 
 public class Lote {
@@ -9,12 +11,15 @@ public class Lote {
 	
 	private int quantidade; 
 	
+	private LocalDate dataDeValidade;
 	
-	public Lote(Produto produto, int quantidade) {
+	
+	public Lote(Produto produto, int quantidade, LocalDate dataDeValidade) {
 		
 		this.id = UUID.randomUUID().toString();
 		this.produto = produto;
 		this.quantidade = quantidade;
+		this.dataDeValidade = dataDeValidade;
 	}
 
 	
@@ -25,7 +30,7 @@ public class Lote {
 	public Produto getProduto() {
 		return produto;
 	}
-
+	
 	public int getQuantidade() {
 		return quantidade;
 	}
@@ -34,10 +39,15 @@ public class Lote {
 		this.quantidade = quantidade;
 	}
 	
+	public LocalDate getDataDeValidade() {
+		return dataDeValidade;
+	}
+	
 	
 	@Override
 	public String toString() {
 		return "Lote ID: " + getId() + " - Produto: " + getProduto().getNome() 
-				+ " - " + getQuantidade() + " itens";
+				+ " - " + getQuantidade() + " itens" + " - Data de validade do lote: "
+						+ getDataDeValidade();
 	}
 }

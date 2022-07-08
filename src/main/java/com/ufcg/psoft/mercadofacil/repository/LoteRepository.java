@@ -11,7 +11,7 @@ import com.ufcg.psoft.mercadofacil.model.Lote;
 @Repository
 public class LoteRepository {
 	
-	private Map<String, Lote> lotes = new HashMap<String, Lote>();
+	private Map<String, Lote> lotes = new HashMap<>();
 	
 	public Collection<Lote> getAll() {
 		return this.lotes.values();

@@ -107,9 +107,10 @@ public class CarrinhoService {
 			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
 
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
-		BigDecimal valorParcialDaCompra = aplicaDescontoDeAcordoComPerfilDoUsuario(usuario, carrinho);
+		BigDecimal valorOriginalDaCompra = calculaValorDosItensDoCarrinho(carrinho);
+		BigDecimal valorDaCompraComDesconto = aplicaDescontoDeAcordoComPerfilDoUsuario(usuario, carrinho);
 
-		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorParcialDaCompra);
+		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorDaCompraComDesconto, valorOriginalDaCompra);
 		compraRepo.addCompra(compra);
 		usuario.addCompra(compra);
 

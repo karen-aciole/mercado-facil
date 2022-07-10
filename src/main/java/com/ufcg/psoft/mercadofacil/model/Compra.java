@@ -8,6 +8,7 @@ import com.ufcg.psoft.mercadofacil.model.pagamento.Paypal;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Compra {
@@ -15,14 +16,16 @@ public class Compra {
     private LocalDate dataDaCompra;
     private Usuario usuario;
     private BigDecimal valorDaCompra;
+    private BigDecimal valorOriginalDaCompra;
     private String formaDePagamento;
     private List<ItemCompra> itensDaCompra;
 
-    public Compra(Usuario usuario, List<ItemCompra> itensDaCompra, String formaDePagamento, BigDecimal valorDaCompra) {
+    public Compra(Usuario usuario, List<ItemCompra> itensDaCompra, String formaDePagamento, BigDecimal valorDaCompra, BigDecimal valorOriginalDaCompra) {
         this.usuario = usuario;
         this.itensDaCompra = itensDaCompra;
         this.formaDePagamento = formaDePagamento;
         this.valorDaCompra = valorDaCompra;
+        this.valorOriginalDaCompra = valorOriginalDaCompra;
         this.dataDaCompra = LocalDate.now();
         this.id = UUID.randomUUID().toString();
     }
@@ -41,6 +44,9 @@ public class Compra {
 
     public BigDecimal getValorDaCompra() {
         return valorDaCompra;
+    }
+    public BigDecimal getValorOriginalDaCompra() {
+        return valorOriginalDaCompra;
     }
 
     public List<ItemCompra> getItensDaCompra() {
@@ -61,6 +67,14 @@ public class Compra {
                 return new Boleto().getFormaDePagamento();
         }
         return "";
+    }
+    private String getFormattedDesconto() {
+        String usuarioPerfil = getUsuario().getPerfil();
+         if (usuarioPerfil.equals("ESPECIAL") || usuarioPerfil.equals("PREMIUM"))
+             if (!valorOriginalDaCompra.equals(valorDaCompra)) {
+                 return " Descontos aplicados - 10% " + ": -R$" + getValorDoDescontoDaCompra();
+        }
+         return "";
     }
 
     private BigDecimal getValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
@@ -98,9 +112,11 @@ public class Compra {
     private BigDecimal getValorDoDescontoDaCompra() {
         BigDecimal valorDoDesconto = new BigDecimal(0);
         BigDecimal desconto = getUsuario().getDescontoDeAcordoComPerfil();
-        valorDoDesconto = valorDoDesconto.add(valorDaCompra.multiply(desconto));
+        if (!valorOriginalDaCompra.equals(valorDaCompra))
+            valorDoDesconto = valorDoDesconto.add(valorOriginalDaCompra.multiply(desconto));
         return valorDoDesconto;
     }
+
 
     @Override
     public String toString() {
@@ -108,9 +124,9 @@ public class Compra {
                 "\nData da compra: " + getDataDaCompra() +
                 "\nItens da compra:\n " +  listaItensDaCompraFormatada() +
                 "\nForma de pagamento: " + getFormattedFormaDePagamento() +
-                "\nValor parcial da compra: R$" + getValorDaCompra() +
-                "\nDescontos aplicados - 10% "+"(Usuário: "+ getUsuario().getPerfil()+")"+": -R$" + getValorDoDescontoDaCompra() +
-                "\nValor total da compra (com possíveis acréscimos): R$" + getValorDaCompraComAcrescimo(valorDaCompra) +
+                "\nValor parcial da compra: R$" + getValorOriginalDaCompra() +
+                "\n"+ getFormattedDesconto() + "(Usuário: "+ getUsuario().getPerfil()+")"+
+                "\nValor total da compra (com possíveis acréscimos): R$" + getValorDaCompraComAcrescimo(getValorDaCompra()) +
                 "\n\n";
     }
 }

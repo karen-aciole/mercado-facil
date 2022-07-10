@@ -5,7 +5,7 @@ import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.LoteNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.ProductNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.QuantidadeInvalidaException;
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
+import com.ufcg.psoft.mercadofacil.model.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.CompraRepository;
 import com.ufcg.psoft.mercadofacil.repository.ItemCompraRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,9 +107,9 @@ public class CarrinhoService {
 			throw new CarrinhoVazioException("Este usuário não possui carrinho ativo.");
 
 		List<ItemCompra> itensDaCompra = copyOf(carrinho.getItensDoCarrinho());
-		BigDecimal valorDaCompra = calculaValorDosItensDoCarrinho(carrinho);
-		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorDaCompra);
+		BigDecimal valorParcialDaCompra = aplicaDescontoDeAcordoComPerfilDoUsuario(usuario, carrinho);
 
+		Compra compra = new Compra(usuario, itensDaCompra, formaDePagamento, valorParcialDaCompra);
 		compraRepo.addCompra(compra);
 		usuario.addCompra(compra);
 
@@ -124,8 +124,35 @@ public class CarrinhoService {
 		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
 			valorTotal = valorTotal.add(item.getProduto().getPreco().multiply(new BigDecimal(item.getQuantidade())));
 		}
-
 		return valorTotal;
+	}
+
+	private int retornaQuantidadeDeItensNocarrinho(Carrinho carrinho) {
+		int quantidade = 0;
+		for (ItemCompra item : carrinho.getItensDoCarrinho()) {
+			quantidade += item.getQuantidade();
+		}
+		return quantidade;
+	}
+	private BigDecimal aplicaDescontoDeAcordoComPerfilDoUsuario(Usuario usuario, Carrinho carrinho) {
+		int quantidadeDeItensNoCarrinho = retornaQuantidadeDeItensNocarrinho(carrinho);
+		BigDecimal valorDoCarrinho = this.calculaValorDosItensDoCarrinho(carrinho);
+ 		BigDecimal valorDaCompraComDesconto = new BigDecimal(0);
+
+		for (ItemCompra item : carrinho.getItensDoCarrinho())
+			quantidadeDeItensNoCarrinho += item.getQuantidade();
+
+		if (usuario.getPerfil().equals("ESPECIAL") && quantidadeDeItensNoCarrinho > 10) {
+			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho
+					.subtract(valorDoCarrinho.multiply(usuario.getDescontoDeAcordoComPerfil())));
+
+		} else if (usuario.getPerfil().equals("PREMIUM") && quantidadeDeItensNoCarrinho > 5) {
+			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho
+					.subtract(valorDoCarrinho.multiply(usuario.getDescontoDeAcordoComPerfil())));
+		} else {
+			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho);
+		}
+		return valorDaCompraComDesconto;
 	}
 }
 

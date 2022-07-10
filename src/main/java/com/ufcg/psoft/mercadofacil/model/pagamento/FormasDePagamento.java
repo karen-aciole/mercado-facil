@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 public abstract class FormasDePagamento {
 
     protected BigDecimal acrescimo;
-    protected BigDecimal valorTotal;
 
     public FormasDePagamento(){
         this.acrescimo = new BigDecimal(0);

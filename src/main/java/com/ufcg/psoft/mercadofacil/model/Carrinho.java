@@ -1,7 +1,5 @@
 package com.ufcg.psoft.mercadofacil.model;
 
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

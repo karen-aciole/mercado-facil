@@ -2,6 +2,7 @@ package com.ufcg.psoft.mercadofacil.controller;
 
 import java.util.List;
 
+import io.swagger.models.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.ufcg.psoft.mercadofacil.dto.UsuarioDTO;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioAlreadyExists;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
+import com.ufcg.psoft.mercadofacil.model.Usuario;
 import com.ufcg.psoft.mercadofacil.service.UsuarioService;
 
 @RestController
@@ -31,8 +32,12 @@ public class UsuarioController {
 	@RequestMapping(value = "/usuario", method = RequestMethod.POST)
 	public ResponseEntity<?> cadastrarUsuario(@RequestBody UsuarioDTO userDTO, UriComponentsBuilder ucBuilder) {
 		String usuarioID;
+
 		if (userDTO.getCpf().length() != 11)
 			return new ResponseEntity<String>("CPF inválido: deve conter 11 dígitos", HttpStatus.BAD_REQUEST);
+
+		if(!validaEntradaDePerfil(userDTO.getPerfil().toUpperCase().replaceAll(" ", "")))
+			return new ResponseEntity<String>("Perfil inválido: deve ser NORMAL, ESPECIAL OU PREMIUM", HttpStatus.BAD_REQUEST);
 
 		try {
 			usuarioID = usuarioService.createUser(userDTO);
@@ -62,11 +67,19 @@ public class UsuarioController {
 	}
 	
 	@RequestMapping(value = "/usuario/{cpf}", method = RequestMethod.PUT)
-	public ResponseEntity<?> editarUsuario(@PathVariable("cpf") String cpf, @RequestParam (required = false) String enderecoDTO, @RequestParam (required = false) String telefoneDTO, UriComponentsBuilder ucBuilder) {
+	public ResponseEntity<?> editarUsuario(@PathVariable("cpf") String cpf, @RequestParam (required = false)
+	String enderecoDTO, @RequestParam (required = false) String telefoneDTO, @RequestParam (required = false)
+	String perfilDTO, UriComponentsBuilder ucBuilder) {
+
 		Usuario usuario;
 		try {
 			usuario = usuarioService.getUserById(cpf);
-			UsuarioDTO usuarioDTO = new UsuarioDTO(cpf, usuario.getNome(), telefoneDTO, enderecoDTO);
+
+			if(perfilDTO != null)
+				if (!validaEntradaDePerfil(perfilDTO.toUpperCase().replaceAll(" ", "")))
+					return new ResponseEntity<String>("Perfil inválido: deve ser NORMAL, ESPECIAL OU PREMIUM", HttpStatus.BAD_REQUEST);
+
+			UsuarioDTO usuarioDTO = new UsuarioDTO(cpf, usuario.getNome(), telefoneDTO, enderecoDTO, perfilDTO);
 			usuarioService.editUser(usuarioDTO, usuario);
 		} catch (UsuarioNotFoundException e) {
 			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
@@ -82,6 +95,12 @@ public class UsuarioController {
 			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<String>("Usuário deletado", HttpStatus.OK);
+	}
+
+	private boolean validaEntradaDePerfil(String perfil) {
+		return perfil.equals(("NORMAL")) ||
+				perfil.equals(("ESPECIAL")) ||
+				perfil.equals(("PREMIUM"));
 	}
 	
 }

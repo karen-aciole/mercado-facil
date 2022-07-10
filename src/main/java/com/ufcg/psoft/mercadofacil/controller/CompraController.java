@@ -4,7 +4,7 @@ import com.ufcg.psoft.mercadofacil.exception.CarrinhoVazioException;
 import com.ufcg.psoft.mercadofacil.exception.CompraNotFoundException;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
 import com.ufcg.psoft.mercadofacil.model.Compra;
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
+import com.ufcg.psoft.mercadofacil.model.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.CarrinhoRepository;
 import com.ufcg.psoft.mercadofacil.service.CarrinhoService;
 import com.ufcg.psoft.mercadofacil.service.CompraService;
@@ -45,7 +45,7 @@ public class CompraController {
         }
 
 
-        if (!validaFormaDePagamento(pagamento))
+        if (!validaEntradaFormaDePagamento(pagamento))
             return new ResponseEntity<String>("Forma de pagamento inválida", HttpStatus.BAD_REQUEST);
 
 
@@ -103,7 +103,7 @@ public class CompraController {
         return new ResponseEntity<String>(listaFormasDePagamento, HttpStatus.OK);
     }
 
-    private Boolean validaFormaDePagamento(String formaDePagamento) {
+    private Boolean validaEntradaFormaDePagamento(String formaDePagamento) {
         return formaDePagamento.equals("BOLETO") ||
                 formaDePagamento.equals("PAYPAL") ||
                 formaDePagamento.equals("CARTAODECREDITO");

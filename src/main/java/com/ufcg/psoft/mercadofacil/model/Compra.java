@@ -4,7 +4,6 @@ import com.ufcg.psoft.mercadofacil.model.pagamento.Boleto;
 import com.ufcg.psoft.mercadofacil.model.pagamento.CartaoDeCredito;
 import com.ufcg.psoft.mercadofacil.model.pagamento.FormasDePagamento;
 import com.ufcg.psoft.mercadofacil.model.pagamento.Paypal;
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -53,31 +52,36 @@ public class Compra {
     }
 
     private String getFormattedFormaDePagamento() {
-        if (formaDePagamento.equals("CARTAODECREDITO")) {
-            return new CartaoDeCredito().getFormaDePagamento();
-        } else if (formaDePagamento.equals("PAYPAL")) {
-            return new Paypal().getFormaDePagamento();
-        } else if (formaDePagamento.equals("BOLETO")) {
-            return new Boleto().getFormaDePagamento();
+        switch (formaDePagamento) {
+            case "CARTAODECREDITO":
+                return new CartaoDeCredito().getFormaDePagamento();
+            case "PAYPAL":
+                return new Paypal().getFormaDePagamento();
+            case "BOLETO":
+                return new Boleto().getFormaDePagamento();
         }
         return "";
     }
 
     private BigDecimal getValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
         BigDecimal valorComAcrescimo = new BigDecimal(0);
-        if (getFormaDePagamento().equals("BOLETO")) {
-            FormasDePagamento boleto = new Boleto();
-            valorComAcrescimo = this.valorDaCompra.add(boleto.calculaValorDaCompraComAcrescimo(valorDaCompra));
+        switch (getFormaDePagamento()) {
+            case "BOLETO":
+                FormasDePagamento boleto = new Boleto();
+                valorComAcrescimo = this.valorDaCompra.add(boleto.calculaValorDaCompraComAcrescimo(valorDaCompra));
+                break;
 
-        } else if (getFormaDePagamento().equals("CARTAODECREDITO")) {
-            FormasDePagamento cartaoDeCredito = new CartaoDeCredito();
-            cartaoDeCredito.calculaValorDaCompraComAcrescimo(valorDaCompra);
-            valorComAcrescimo = this.valorDaCompra.add(cartaoDeCredito.calculaValorDaCompraComAcrescimo(valorDaCompra));
+            case "CARTAODECREDITO":
+                FormasDePagamento cartaoDeCredito = new CartaoDeCredito();
+                cartaoDeCredito.calculaValorDaCompraComAcrescimo(valorDaCompra);
+                valorComAcrescimo = this.valorDaCompra.add(cartaoDeCredito.calculaValorDaCompraComAcrescimo(valorDaCompra));
+                break;
 
-        } else if (getFormaDePagamento().equals("PAYPAL")) {
-            FormasDePagamento paypal = new Paypal();
-            paypal.calculaValorDaCompraComAcrescimo(valorDaCompra);
-            valorComAcrescimo = this.valorDaCompra.add(paypal.calculaValorDaCompraComAcrescimo(valorDaCompra));
+            case "PAYPAL":
+                FormasDePagamento paypal = new Paypal();
+                paypal.calculaValorDaCompraComAcrescimo(valorDaCompra);
+                valorComAcrescimo = this.valorDaCompra.add(paypal.calculaValorDaCompraComAcrescimo(valorDaCompra));
+                break;
         }
         return valorComAcrescimo;
     }
@@ -90,13 +94,23 @@ public class Compra {
         }
         return sb.toString();
     }
+
+    private BigDecimal getValorDoDescontoDaCompra() {
+        BigDecimal valorDoDesconto = new BigDecimal(0);
+        BigDecimal desconto = getUsuario().getDescontoDeAcordoComPerfil();
+        valorDoDesconto = valorDoDesconto.add(valorDaCompra.multiply(desconto));
+        return valorDoDesconto;
+    }
+
     @Override
     public String toString() {
         return "\nID da Compra: " + getId() +
                 "\nData da compra: " + getDataDaCompra() +
                 "\nItens da compra:\n " +  listaItensDaCompraFormatada() +
                 "\nForma de pagamento: " + getFormattedFormaDePagamento() +
-                "\nValor da compra: R$" + getValorDaCompra() +
-                "\nValor total da compra (com possíveis acréscimos): R$" + getValorDaCompraComAcrescimo(valorDaCompra) + "\n\n";
+                "\nValor parcial da compra: R$" + getValorDaCompra() +
+                "\nDescontos aplicados - 10% "+"(Usuário: "+ getUsuario().getPerfil()+")"+": -R$" + getValorDoDescontoDaCompra() +
+                "\nValor total da compra (com possíveis acréscimos): R$" + getValorDaCompraComAcrescimo(valorDaCompra) +
+                "\n\n";
     }
 }

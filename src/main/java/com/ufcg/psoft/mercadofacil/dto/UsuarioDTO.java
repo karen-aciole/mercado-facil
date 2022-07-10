@@ -6,12 +6,14 @@ public class UsuarioDTO {
 	private String nome;
 	private String endereco;
 	private String telefone;
+	private String perfil;
 	
-	public UsuarioDTO(String cpf, String nome, String telefone, String endereco) {
+	public UsuarioDTO(String cpf, String nome, String telefone, String endereco, String perfil) {
 		this.cpf = cpf; 
 		this.nome = nome;
 		this.telefone = telefone;
 		this.endereco = endereco;
+		this.perfil = perfil;
 	}
 	
 	public String getCpf() {
@@ -29,9 +31,13 @@ public class UsuarioDTO {
 	public String getTelefone() {
 		return telefone;
 	}
+	public String getPerfil() {
+		return perfil;
+	}
 
 	@Override
 	public String toString() {
 		return "Usuário: " + getCpf() + " - Nome: " + getNome();
 	}
+
 }

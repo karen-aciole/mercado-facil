@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.ufcg.psoft.mercadofacil.dto.UsuarioDTO;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioAlreadyExists;
 import com.ufcg.psoft.mercadofacil.exception.UsuarioNotFoundException;
-import com.ufcg.psoft.mercadofacil.model.usuario.Usuario;
+import com.ufcg.psoft.mercadofacil.model.Usuario;
 import com.ufcg.psoft.mercadofacil.repository.UsuarioRepository;
 
 @Service
@@ -34,7 +34,11 @@ public class UsuarioService {
 
 		if (userRepo.getUser(userDTO.getCpf())!= null) throw new UsuarioAlreadyExists("Usuário já está cadastrado!");
 
-		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone());
+		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone(),
+				userDTO.getPerfil().toUpperCase());
+
+		usuario.setDescontoDeAcordoComPerfil(userDTO.getPerfil().toUpperCase());
+
 		this.userRepo.addUser(usuario);
 		
 		return usuario.getCpf();
@@ -50,6 +54,13 @@ public class UsuarioService {
 	public void editUser(UsuarioDTO usuarioDTO, Usuario usuario) throws UsuarioNotFoundException {
 		usuario.setEndereco(usuarioDTO.getEndereco() != null ? usuarioDTO.getEndereco() : usuario.getEndereco());
 		usuario.setTelefone(usuarioDTO.getTelefone() != null ? usuarioDTO.getTelefone() : usuario.getTelefone());
+
+		if (usuario.getPerfil() != null) {
+			usuario.setPerfil(usuarioDTO.getPerfil().toUpperCase());
+			usuario.setDescontoDeAcordoComPerfil(usuarioDTO.getPerfil().toUpperCase());
+		}
+		usuario.setPerfil(usuario.getPerfil());
+
 		this.userRepo.editUser(usuario.getCpf(), usuario);
 	}
 	

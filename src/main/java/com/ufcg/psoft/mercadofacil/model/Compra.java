@@ -77,6 +77,20 @@ public class Compra {
          return "";
     }
 
+    private String getValorAcrescimo() {
+        BigDecimal valorDoAcrescimo;
+        if (getFormaDePagamento().equals("CARTAODECREDITO")) {
+            valorDoAcrescimo = valorDaCompra.multiply(new BigDecimal(0.05));
+            return "Valor do acréscimo: R$" + String.format("%.2f", valorDoAcrescimo);
+        } else if (getFormaDePagamento().equals("PAYPAL")) {
+            valorDoAcrescimo = valorDaCompra.multiply(new BigDecimal(0.05));
+            return "Valor do acréscimo: R$" + String.format("%.2f", valorDoAcrescimo);
+        } else if (getFormaDePagamento().equals("BOLETO")) {
+            return "";
+        }
+        return "";
+    }
+
     private BigDecimal getValorDaCompraComAcrescimo(BigDecimal valorDaCompra) {
         BigDecimal valorComAcrescimo = new BigDecimal(0);
         switch (getFormaDePagamento()) {
@@ -126,7 +140,8 @@ public class Compra {
                 "\nForma de pagamento: " + getFormattedFormaDePagamento() +
                 "\nValor parcial da compra: R$" + getValorOriginalDaCompra() +
                 "\n"+ getFormattedDesconto() + "(Usuário: "+ getUsuario().getPerfil()+")"+
-                "\nValor total da compra (com possíveis acréscimos): R$" + getValorDaCompraComAcrescimo(getValorDaCompra()) +
+                "\n"+ getValorAcrescimo() +
+                "\nValor total da compra: R$" + String.format("%.2f", getValorDaCompraComAcrescimo(getValorDaCompra())) +
                 "\n\n";
     }
 }

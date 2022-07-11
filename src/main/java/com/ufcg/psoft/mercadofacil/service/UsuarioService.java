@@ -34,7 +34,7 @@ public class UsuarioService {
 
 		if (userRepo.getUser(userDTO.getCpf())!= null) throw new UsuarioAlreadyExists("Usuário já está cadastrado!");
 
-		String perfil = userDTO.getPerfil().isBlank() ? "COMUM": userDTO.getPerfil().toUpperCase();
+		String perfil = userDTO.getPerfil().isBlank() ? "COMUM" : userDTO.getPerfil().toUpperCase();
 
 		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getTelefone(), userDTO.getEndereco(),
 				perfil);
@@ -57,10 +57,11 @@ public class UsuarioService {
 		usuario.setEndereco(usuarioDTO.getEndereco() != null ? usuarioDTO.getEndereco() : usuario.getEndereco());
 		usuario.setTelefone(usuarioDTO.getTelefone() != null ? usuarioDTO.getTelefone() : usuario.getTelefone());
 
-		if (usuario.getPerfil() != null) {
+		if (usuarioDTO.getPerfil() != null) {
 			usuario.setPerfil(usuarioDTO.getPerfil().toUpperCase());
 			usuario.setDescontoDeAcordoComPerfil(usuarioDTO.getPerfil().toUpperCase());
 		}
+
 		usuario.setPerfil(usuario.getPerfil());
 
 		this.userRepo.editUser(usuario.getCpf(), usuario);

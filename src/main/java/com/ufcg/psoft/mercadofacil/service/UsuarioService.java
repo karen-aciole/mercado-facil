@@ -34,7 +34,7 @@ public class UsuarioService {
 
 		if (userRepo.getUser(userDTO.getCpf())!= null) throw new UsuarioAlreadyExists("Usuário já está cadastrado!");
 
-		String perfil = userDTO.getPerfil().isBlank() ? "COMUM": userDTO.getPerfil();
+		String perfil = userDTO.getPerfil().isBlank() ? "COMUM": userDTO.getPerfil().toUpperCase();
 
 		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getTelefone(), userDTO.getEndereco(),
 				perfil);

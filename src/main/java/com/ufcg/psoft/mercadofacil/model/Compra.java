@@ -83,7 +83,7 @@ public class Compra {
             valorDoAcrescimo = valorDaCompra.multiply(new BigDecimal(0.05));
             return "Valor do acréscimo: R$" + String.format("%.2f", valorDoAcrescimo);
         } else if (getFormaDePagamento().equals("PAYPAL")) {
-            valorDoAcrescimo = valorDaCompra.multiply(new BigDecimal(0.05));
+            valorDoAcrescimo = valorDaCompra.multiply(new BigDecimal(0.02));
             return "Valor do acréscimo: R$" + String.format("%.2f", valorDoAcrescimo);
         } else if (getFormaDePagamento().equals("BOLETO")) {
             return "";

@@ -140,20 +140,20 @@ public class CarrinhoService {
 		BigDecimal valorDoCarrinho = this.calculaValorDosItensDoCarrinho(carrinho);
  		BigDecimal valorDaCompraComDesconto = new BigDecimal(0);
 
-		for (ItemCompra item : carrinho.getItensDoCarrinho())
-			quantidadeDeItensNoCarrinho += item.getQuantidade();
-
-		if (usuario.getPerfil().equals("ESPECIAL") && quantidadeDeItensNoCarrinho > 10) {
-			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho
+		if (validaPerfilAptoPraDesconto(usuario.getPerfil(), quantidadeDeItensNoCarrinho)) {
+			return valorDaCompraComDesconto.add(valorDoCarrinho
 					.subtract(valorDoCarrinho.multiply(usuario.getDescontoDeAcordoComPerfil())));
-
-		} else if (usuario.getPerfil().equals("PREMIUM") && quantidadeDeItensNoCarrinho > 5) {
-			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho
-					.subtract(valorDoCarrinho.multiply(usuario.getDescontoDeAcordoComPerfil())));
-		} else {
-			valorDaCompraComDesconto = valorDaCompraComDesconto.add(valorDoCarrinho);
 		}
-		return valorDaCompraComDesconto;
+		return valorDaCompraComDesconto.add(valorDoCarrinho);
+	}
+
+	private boolean validaPerfilAptoPraDesconto(String perfil, int quantidadeDeItensNoCarrinho) {
+		if (perfil.equals("ESPECIAL") && quantidadeDeItensNoCarrinho > 10)
+			return true;
+		else if (perfil.equals("PREMIUM") && quantidadeDeItensNoCarrinho > 5)
+			return true;
+
+		return false;
 	}
 }
 

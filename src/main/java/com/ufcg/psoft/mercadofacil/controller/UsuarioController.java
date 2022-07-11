@@ -36,8 +36,9 @@ public class UsuarioController {
 		if (userDTO.getCpf().length() != 11)
 			return new ResponseEntity<String>("CPF inválido: deve conter 11 dígitos", HttpStatus.BAD_REQUEST);
 
-		if(!validaEntradaDePerfil(userDTO.getPerfil().toUpperCase().replaceAll(" ", "")))
-			return new ResponseEntity<String>("Perfil inválido: deve ser NORMAL, ESPECIAL OU PREMIUM", HttpStatus.BAD_REQUEST);
+		if (!validaEntradaDePerfil(userDTO.getPerfil().toUpperCase().replaceAll(" ", "")))
+			if (!userDTO.getPerfil().isBlank())
+				return new ResponseEntity<String>("Perfil inválido: deve ser NORMAL, ESPECIAL OU PREMIUM", HttpStatus.BAD_REQUEST);
 
 		try {
 			usuarioID = usuarioService.createUser(userDTO);
@@ -55,8 +56,11 @@ public class UsuarioController {
 		} catch (UsuarioNotFoundException e) { 
 			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
-		
-		return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+		String dadosDoCliente = "{\n\"cpf\":"+ usuario.getCpf() + ",\n \"telefone\": " + usuario.getEndereco() +
+				",\n \"nome\": " + usuario.getNome() + ",\n \"perfil\": " + usuario.getPerfil() +
+				",\n \"endereco\": " + usuario.getTelefone() + "\n}";
+
+		return new ResponseEntity<String>(dadosDoCliente, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/usuarios", method = RequestMethod.GET)

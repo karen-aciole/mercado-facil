@@ -34,17 +34,19 @@ public class UsuarioService {
 
 		if (userRepo.getUser(userDTO.getCpf())!= null) throw new UsuarioAlreadyExists("Usuário já está cadastrado!");
 
+		String perfil = userDTO.getPerfil().isBlank() ? "COMUM": userDTO.getPerfil();
+
 		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone(),
-				userDTO.getPerfil().toUpperCase());
+				perfil);
 
 		usuario.setDescontoDeAcordoComPerfil(userDTO.getPerfil().toUpperCase());
 
 		this.userRepo.addUser(usuario);
-		
+
 		return usuario.getCpf();
 	}
 	
-	public Usuario getUserById(String cpf) throws UsuarioNotFoundException { 
+	public Usuario getUserById(String cpf) throws UsuarioNotFoundException {
 		Usuario user = this.userRepo.getUser(cpf);
 		if (user == null) throw new UsuarioNotFoundException("Usuário: " + cpf + " não encontrado");
 		

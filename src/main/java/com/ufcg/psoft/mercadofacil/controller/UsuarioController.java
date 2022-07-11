@@ -56,9 +56,12 @@ public class UsuarioController {
 		} catch (UsuarioNotFoundException e) { 
 			return new ResponseEntity<String>("Usuário não encontrado", HttpStatus.NOT_FOUND);
 		}
-		String dadosDoCliente = "{\n\"cpf\":"+ usuario.getCpf() + ",\n \"telefone\": " + usuario.getEndereco() +
+
+
+		String dadosDoCliente = "{\n\"cpf\":"+ usuario.getCpf() + ",\n \"endereco\": " + usuario.getEndereco() +
 				",\n \"nome\": " + usuario.getNome() + ",\n \"perfil\": " + usuario.getPerfil() +
-				",\n \"endereco\": " + usuario.getTelefone() + "\n}";
+				",\n \"telefone\": " + usuario.getTelefone() + "\n}";
+
 
 		return new ResponseEntity<String>(dadosDoCliente, HttpStatus.OK);
 	}

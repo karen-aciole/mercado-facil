@@ -36,7 +36,7 @@ public class UsuarioService {
 
 		String perfil = userDTO.getPerfil().isBlank() ? "COMUM": userDTO.getPerfil();
 
-		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getEndereco(), userDTO.getTelefone(),
+		Usuario usuario = new Usuario(userDTO.getCpf(), userDTO.getNome(), userDTO.getTelefone(), userDTO.getEndereco(),
 				perfil);
 
 		usuario.setDescontoDeAcordoComPerfil(userDTO.getPerfil().toUpperCase());

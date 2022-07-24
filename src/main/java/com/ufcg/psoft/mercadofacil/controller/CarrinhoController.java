@@ -1,7 +1,5 @@
 package com.ufcg.psoft.mercadofacil.controller;
 
-import java.util.List;
-
 import com.ufcg.psoft.mercadofacil.dto.ItemCompraDTO;
 import com.ufcg.psoft.mercadofacil.exception.*;
 import com.ufcg.psoft.mercadofacil.model.Carrinho;
